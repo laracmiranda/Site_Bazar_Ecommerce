@@ -14,7 +14,7 @@ model itens {
   categoria                              String     @db.VarChar(100)
   status_item                            Boolean?
   imagem                                 String?    @db.VarChar(100)
-  cpf_usuario                            String?    @db.Char(1)
+  cpf_usuario                            String?    @db.Char(11)
   usuarios                               usuarios?  @relation(fields: [cpf_usuario], references: [cpf], onDelete: NoAction, onUpdate: NoAction)
   proposta_proposta_item_desejadoToitens proposta[] @relation("proposta_item_desejadoToitens")
   proposta_proposta_item_ofertadoToitens proposta[] @relation("proposta_item_ofertadoToitens")
@@ -24,7 +24,7 @@ model proposta {
   id_proposta                         Int       @id @default(autoincrement())
   item_ofertado                       Int?
   item_desejado                       Int?
-  cpf_usuario                         String?   @db.Char(1)
+  cpf_usuario                         String?   @db.Char(11)
   status_proposta                     Boolean?
   usuarios                            usuarios? @relation(fields: [cpf_usuario], references: [cpf], onDelete: NoAction, onUpdate: NoAction)
   itens_proposta_item_desejadoToitens itens?    @relation("proposta_item_desejadoToitens", fields: [item_desejado], references: [id_item], onDelete: NoAction, onUpdate: NoAction)
