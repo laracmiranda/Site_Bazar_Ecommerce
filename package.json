@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "Projeto FullStack para o Bootcamp da Atlântico Avanti",
   "main": "index.js",
+  "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "nodemon index.js"
@@ -19,6 +20,7 @@
   "homepage": "https://github.com/laracmiranda/Projeto_AvantiBootcamp#readme",
   "dependencies": {
     "@prisma/client": "^6.10.1",
+    "cors": "^2.8.5",
     "express": "^5.1.0"
   },
   "devDependencies": {
