@@ -1,43 +1,15 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
 generator client {
   provider = "prisma-client-js"
+  output   = "../generated/prisma"
 }
 
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
-}
-
-model itens {
-  id_item                                Int        @id @default(autoincrement())
-  nome                                   String     @db.VarChar(100)
-  descricao                              String     @db.VarChar(100)
-  categoria                              String     @db.VarChar(100)
-  status_item                            Boolean?
-  imagem                                 String?    @db.VarChar(100)
-  cpf_usuario                            String?    @db.Char(1)
-  usuarios                               usuarios?  @relation(fields: [cpf_usuario], references: [cpf], onDelete: NoAction, onUpdate: NoAction)
-  proposta_proposta_item_desejadoToitens proposta[] @relation("proposta_item_desejadoToitens")
-  proposta_proposta_item_ofertadoToitens proposta[] @relation("proposta_item_ofertadoToitens")
-}
-
-model proposta {
-  id_proposta                         Int       @id @default(autoincrement())
-  item_ofertado                       Int?
-  item_desejado                       Int?
-  cpf_usuario                         String?   @db.Char(1)
-  status_proposta                     Boolean?
-  usuarios                            usuarios? @relation(fields: [cpf_usuario], references: [cpf], onDelete: NoAction, onUpdate: NoAction)
-  itens_proposta_item_desejadoToitens itens?    @relation("proposta_item_desejadoToitens", fields: [item_desejado], references: [id_item], onDelete: NoAction, onUpdate: NoAction)
-  itens_proposta_item_ofertadoToitens itens?    @relation("proposta_item_ofertadoToitens", fields: [item_ofertado], references: [id_item], onDelete: NoAction, onUpdate: NoAction)
-}
-
-/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
-model usuarios {
-  cpf      String     @id @db.Char(11)
-  nome     String     @db.VarChar(100)
-  email    String     @unique @db.VarChar(100)
-  senha    String     @db.VarChar(100)
-  endereco String     @db.VarChar(200)
-  itens    itens[]
-  proposta proposta[]
 }
