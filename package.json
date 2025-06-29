@@ -20,6 +20,7 @@
   "homepage": "https://github.com/laracmiranda/Projeto_AvantiBootcamp#readme",
   "dependencies": {
     "@prisma/client": "^6.10.1",
+    "cors": "^2.8.5",
     "express": "^5.1.0"
   },
   "devDependencies": {
