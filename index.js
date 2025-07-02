@@ -8,11 +8,11 @@ const app = express();
 //Tratar JSON
 app.use(express.json());
 
-//Rotas de aplicação
-app.use(routes);
-
 //Acesso para API
 app.use(cors());
+
+//Rotas de aplicação
+app.use(routes);
 
 
 //Iniciar servidor

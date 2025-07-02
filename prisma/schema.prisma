@@ -13,9 +13,9 @@ model itens {
   descricao                              String     @db.VarChar(100)
   categoria                              String     @db.VarChar(100)
   status_item                            Boolean?
-  imagem                                 String?    @db.VarChar(100)
+  imagem                                 String?
   cpf_usuario                            String?    @db.Char(11)
-  usuarios                               usuarios?  @relation(fields: [cpf_usuario], references: [cpf], onDelete: NoAction, onUpdate: NoAction)
+  usuarios                               usuarios?  @relation(fields: [cpf_usuario], references: [cpf], onDelete: NoAction, onUpdate: NoAction, map: "fk_usuario")
   proposta_proposta_item_desejadoToitens proposta[] @relation("proposta_item_desejadoToitens")
   proposta_proposta_item_ofertadoToitens proposta[] @relation("proposta_item_ofertadoToitens")
 }
@@ -26,9 +26,9 @@ model proposta {
   item_desejado                       Int?
   cpf_usuario                         String?   @db.Char(11)
   status_proposta                     Boolean?
-  usuarios                            usuarios? @relation(fields: [cpf_usuario], references: [cpf], onDelete: NoAction, onUpdate: NoAction)
-  itens_proposta_item_desejadoToitens itens?    @relation("proposta_item_desejadoToitens", fields: [item_desejado], references: [id_item], onDelete: NoAction, onUpdate: NoAction)
-  itens_proposta_item_ofertadoToitens itens?    @relation("proposta_item_ofertadoToitens", fields: [item_ofertado], references: [id_item], onDelete: NoAction, onUpdate: NoAction)
+  itens_proposta_item_desejadoToitens itens?    @relation("proposta_item_desejadoToitens", fields: [item_desejado], references: [id_item], onDelete: NoAction, onUpdate: NoAction, map: "fk_item_desejado")
+  itens_proposta_item_ofertadoToitens itens?    @relation("proposta_item_ofertadoToitens", fields: [item_ofertado], references: [id_item], onDelete: NoAction, onUpdate: NoAction, map: "fk_item_ofertado")
+  usuarios                            usuarios? @relation(fields: [cpf_usuario], references: [cpf], onDelete: NoAction, onUpdate: NoAction, map: "fk_usuario_proposta")
 }
 
 /// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
