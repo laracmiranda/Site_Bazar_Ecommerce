@@ -1,6 +1,6 @@
 import prisma from '../prisma/client.js';
 
-class ItensRepository {
+class itensRepository {
   findAll() {
     return prisma.itens.findMany({
       include: {

@@ -6,10 +6,10 @@ import {
   putProposta,
   deleteProposta,
   patchStatusProposta,
-  listarPropostasPendentes,
-  listarPropostasPorProponente,
-  listarPropostasPorDono,
-  listarPropostasPorStatus
+  getPropostasPendentes,
+  getPropostasPorProponente,
+  getPropostasPorDono,
+  getPropostasPorStatus
 } from '../controllers/proposta.controller.js';
 
 const router = express.Router();
@@ -22,9 +22,9 @@ router.delete('/:id', deleteProposta);
 router.patch('/:id/status', patchStatusProposta);
 
 // Novas rotas para filtragem de propostas
-router.get('/pendentes', listarPropostasPendentes);
-router.get('/proponente/:cpf', listarPropostasPorProponente);
-router.get('/dono/:cpf', listarPropostasPorDono);
-router.get('/status/:status', listarPropostasPorStatus);
+router.get('/pendentes', getPropostasPendentes);
+router.get('/proponente/:cpf', getPropostasPorProponente);
+router.get('/dono/:cpf', getPropostasPorDono);
+router.get('/status/:status', getPropostasPorStatus);
 
 export default router;

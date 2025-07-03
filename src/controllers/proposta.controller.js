@@ -75,7 +75,7 @@ export const patchStatusProposta = async (req, res) => {
 
 // Listagem de propostas pendentes
 
-export const listarPropostasPendentes = async (req, res) => {
+export const getPropostasPendentes = async (req, res) => {
   try {
     const propostas = await listarPropostasPendentes();
     res.status(200).json(propostas);
@@ -86,7 +86,7 @@ export const listarPropostasPendentes = async (req, res) => {
 
 // Listagem de propostas por proponente
 
-export const listarPropostasPorProponente = async (req, res) => {
+export const getPropostasPorProponente = async (req, res) => {
   try {
     const { cpf } = req.params;
     const propostas = await listarPropostasPorProponente(cpf);
@@ -98,7 +98,7 @@ export const listarPropostasPorProponente = async (req, res) => {
 
 // Listagem de propostas por dono
 
-export const listarPropostasPorDono = async (req, res) => {
+export const getPropostasPorDono = async (req, res) => {
   try {
     const { cpf } = req.params;
     const propostas = await listarPropostasPorDono(cpf);
@@ -110,7 +110,7 @@ export const listarPropostasPorDono = async (req, res) => {
 
 // Listagem de propostas por status
 
-export const listarPropostasPorStatus = async (req, res) => {
+export const getPropostasPorStatus = async (req, res) => {
   try {
     const { status } = req.params;
     const propostas = await listarPropostasPorStatus(status);

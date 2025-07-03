@@ -36,3 +36,6 @@ router.put('/:cpf', putUsuario);
 
 // Deletar usuário
 router.delete('/:cpf', deleteUsuario);
+
+
+export default router;
