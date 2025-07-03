@@ -9,4 +9,5 @@ router.post('/', postProposta);
 router.put('/:id', putProposta);
 router.delete('/:id', deleteProposta);
 
+
 export default router;

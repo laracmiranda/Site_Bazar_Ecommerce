@@ -20,6 +20,9 @@
   "homepage": "https://github.com/laracmiranda/Projeto_AvantiBootcamp#readme",
   "dependencies": {
     "@prisma/client": "^6.10.1",
+    "cookie-parser": "^1.4.7",
+    "jsonwebtoken": "^9.0.2",
+    "pg": "^8.16.3"
     "cloudinary": "^2.7.0",
     "cors": "^2.8.5",
     "dotenv": "^17.0.1",
