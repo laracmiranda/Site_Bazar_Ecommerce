@@ -1,12 +1,38 @@
 import express from 'express';
-import {deleteUsuario, getUsuarioPorCpf, getUsuarios, postUsuario, putUsuario, } from '../controllers/usuarios.controller.js';
+import {
+  getUsuarios,
+  getUsuarioPorCpf,
+  getUsuarioPorEmail,
+  getPropostasFeitas,
+  getPropostasRecebidas,
+  postUsuario,
+  putUsuario,
+  deleteUsuario
+} from '../controllers/usuarios.controller.js';
+
 
 const router = express.Router();
 
+// Listar todos os usuários
 router.get('/', getUsuarios);
-router.get('/:cpf', getUsuarioPorCpf);
-router.post('/', postUsuario);
-router.put('/:cpf', putUsuario);
-router.delete('/:cpf', deleteUsuario);
 
-export default router;
+// Buscar usuário por email (pode ser por query param ou rota, aqui usamos rota)
+router.get('/email/:email', getUsuarioPorEmail);
+
+// Buscar usuário por CPF
+router.get('/:cpf', getUsuarioPorCpf);
+
+// Listar propostas feitas por um usuário
+router.get('/:cpf/propostas/feitas', getPropostasFeitas);
+
+// Listar propostas recebidas por um usuário
+router.get('/:cpf/propostas/recebidas', getPropostasRecebidas);
+
+// Criar novo usuário
+router.post('/', postUsuario);
+
+// Atualizar usuário
+router.put('/:cpf', putUsuario);
+
+// Deletar usuário
+router.delete('/:cpf', deleteUsuario);

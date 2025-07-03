@@ -20,3 +20,10 @@ export const removerItem = async (id) => {
     return await itensRepository.delete(id);
 };
 
+export const listarItensAtivos = async () => {
+    return await itensRepository.findAtivos();
+};
+
+export const listarItensPorDono = async (cpf) => {
+    return await itensRepository.findByDono(cpf);
+};
