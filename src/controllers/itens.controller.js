@@ -1,3 +1,6 @@
+import cloudinary from '../config/cloudinary.js';
+import fs from 'fs';
+
 import {
   listarItens, 
   buscarItemPorId,
@@ -27,12 +30,26 @@ export const getItemPorId = async (req, res) => {
   }
 };
 
-export const postItem = async (req, res) =>{
-  try{
-    const novoItem = await criarItem(req.body);
+export const postItem = async (req, res) => {
+  try {
+    const dadosItem = req.body;
+
+    // Faz o upload da imagem para o Cloudinary
+    const resultado = await cloudinary.uploader.upload(req.file.path, {
+      folder: 'itens',
+    });
+
+    // Apaga o arquivo temporário
+    fs.unlinkSync(req.file.path);
+
+    // Salva a URL da imagem no corpo do item
+    dadosItem.imagem = resultado.secure_url;
+
+    const novoItem = await criarItem(dadosItem);
     res.status(201).json(novoItem);
-  } catch(error){
-    res.status(400).json({erro: 'Erro ao cadastrar o item', mensagem: error.message});
+  } catch (error) {
+    console.error(error);
+    res.status(400).json({ erro: 'Erro ao cadastrar o item', mensagem: error.message });
   }
 };
 

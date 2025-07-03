@@ -11,9 +11,6 @@ const app = express();
 //Tratar JSON
 app.use(express.json());
 
-//Rotas de aplicação
-app.use(routes);
-
 //Acesso para API
 app.use(cors());
 
@@ -22,6 +19,9 @@ app.use(cookieParser());
 
 //Rota de login ultilizando JASON WEB TOKEN (JWT)
 app.use(authRouter);
+
+//Rotas de aplicação
+app.use(routes);
 
 //Iniciar servidor
 const PORT = process.env.PORT || 3000;
