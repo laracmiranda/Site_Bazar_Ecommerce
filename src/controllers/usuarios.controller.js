@@ -27,12 +27,12 @@ export const getUsuarioPorCpf = async (req, res) => {
   }
 };
 
-export const postUsuario = async (req, res) =>{
-  try{
+export const postUsuario = async (req, res) => {
+  try {
     const novoUsuario = await criarUsuario(req.body);
     res.status(201).json(novoUsuario);
-  } catch(error){
-    res.status(400).json({erro: 'Erro ao cadastrar o usuário', mensagem: error.message});
+  } catch (error) {
+    res.status(400).json({ erro: 'Erro ao cadastrar o usuário', mensagem: error.message });
   }
 };
 
