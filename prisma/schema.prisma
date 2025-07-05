@@ -7,40 +7,55 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+// Tabela referente aos itens
+
 model itens {
   id_item                                Int        @id @default(autoincrement())
   nome                                   String     @db.VarChar(100)
   descricao                              String     @db.VarChar(100)
-  categoria                              String?
+  categoria                              String?    
   status_item                            Boolean    @default(true)
-  imagem                                 String?
+  imagem                                 String?    
   cpf_dono                               String?    @db.Char(11)
-  usuarios                               usuarios?  @relation(fields: [cpf_dono], references: [cpf], onDelete: NoAction, onUpdate: NoAction)
-  proposta_proposta_item_desejadoToitens proposta[] @relation("proposta_item_desejadoToitens")
-  proposta_proposta_item_ofertadoToitens proposta[] @relation("proposta_item_ofertadoToitens")
+  
+  // Relacionamentos com a tabela de usuários -- Nesse caso, o dono do item
+  donoItem              usuarios?  @relation(fields: [cpf_dono], references: [cpf], onDelete: NoAction, onUpdate: NoAction)      
+  
+  //Relacionamentos com a tablela de propostas
+  propostasComoDesejado proposta[] @relation("ItemDesejadoDaProposta")
+  propostasComoOfertado proposta[] @relation("ItemOfertadoNaProposta")
 }
+
+//Tabela referente às propostas
 
 model proposta {
-  id_proposta                                Int       @id @default(autoincrement())
-  item_ofertado                              Int?
-  item_desejado                              Int?
-  status_proposta                            String    @default("pendente")
-  cpf_dono_item                              String?   @db.Char(11)
-  cpf_proponente                             String?   @db.Char(11)
-  usuarios_proposta_cpf_dono_itemTousuarios  usuarios? @relation("proposta_cpf_dono_itemTousuarios", fields: [cpf_dono_item], references: [cpf], onDelete: NoAction, onUpdate: NoAction)
-  usuarios_proposta_cpf_proponenteTousuarios usuarios? @relation("proposta_cpf_proponenteTousuarios", fields: [cpf_proponente], references: [cpf], onDelete: NoAction, onUpdate: NoAction)
-  itens_proposta_item_desejadoToitens        itens?    @relation("proposta_item_desejadoToitens", fields: [item_desejado], references: [id_item], onDelete: NoAction, onUpdate: NoAction)
-  itens_proposta_item_ofertadoToitens        itens?    @relation("proposta_item_ofertadoToitens", fields: [item_ofertado], references: [id_item], onDelete: NoAction, onUpdate: NoAction)
+  id_proposta                         Int       @id @default(autoincrement())
+  item_ofertado                       Int? 
+  item_desejado                       Int?
+  cpf_proponente                      String?   @db.Char(11)
+  cpf_dono_item                       String?   @db.Char(11)
+  status_proposta                     String    @default("pendente")
+
+  // Relacionamentos com a tabela de usuarios
+  DonoItem     usuarios? @relation("UsuarioDonoItemDesejado", fields: [cpf_dono_item], references: [cpf], onDelete: NoAction, onUpdate: NoAction)
+  proponente   usuarios? @relation("UsuarioProponente", fields: [cpf_proponente], references: [cpf], onDelete: NoAction, onUpdate: NoAction)
+  
+  //Relacionamentos com a tabela de itens
+  itemDesejado itens?    @relation("ItemDesejadoDaProposta", fields: [item_desejado], references: [id_item], onDelete: NoAction, onUpdate: NoAction)
+  itemOfertado itens?    @relation("ItemOfertadoNaProposta", fields: [item_ofertado], references: [id_item], onDelete: NoAction, onUpdate: NoAction)
 }
 
-/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+//Tabela referente aos usuários
+
 model usuarios {
-  cpf                                        String     @id @db.Char(11)
-  nome                                       String     @db.VarChar(100)
-  email                                      String     @unique @db.VarChar(100)
-  senha                                      String     @db.VarChar(100)
-  endereco                                   String     @db.VarChar(200)
-  itens                                      itens[]
-  proposta_proposta_cpf_dono_itemTousuarios  proposta[] @relation("proposta_cpf_dono_itemTousuarios")
-  proposta_proposta_cpf_proponenteTousuarios proposta[] @relation("proposta_cpf_proponenteTousuarios")
+  cpf      String     @id @db.Char(11)
+  nome     String     @db.VarChar(100)
+  email    String     @unique @db.VarChar(100)
+  senha    String     @db.VarChar(100)
+  endereco String     @db.VarChar(200)
+  itens    itens[]    //Um usuário pode ter vários itens
+
+  // Relacionamentos com a tabela de propostas
+  propostasFeitas proposta[]  @relation("UsuarioProponente")//Um usuário pode fazer várias propostas
+  propostasRecebidas proposta[] @relation("UsuarioDonoItemDesejado")
 }

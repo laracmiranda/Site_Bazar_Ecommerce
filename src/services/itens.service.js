@@ -20,3 +20,18 @@ export const removerItem = async (id) => {
     return await itensRepository.delete(id);
 };
 
+export const listarItensPorCategoria = async (categoria) => {
+    return await itensRepository.findByCategoria(categoria);
+};
+
+export const buscarItensPorPalavraChave = async (termo) => {
+    return await itensRepository.buscarPorPalavraChave(termo);
+};
+
+export const listarItensAtivos = async () => {
+    return await itensRepository.findAtivos();
+};
+
+export const listarItensPorDono = async (cpf) => {
+    return await itensRepository.findByDono(cpf);
+};

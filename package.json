@@ -6,7 +6,8 @@
   "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon index.js"
+    "start": "nodemon index.js",
+    "dev": "nodemon index.js"
   },
   "repository": {
     "type": "git",
@@ -19,6 +20,7 @@
   },
   "homepage": "https://github.com/laracmiranda/Projeto_AvantiBootcamp#readme",
   "dependencies": {
+    "postgres": "^3.4.7"
     "@prisma/client": "^6.10.1",
     "cookie-parser": "^1.4.7",
     "jsonwebtoken": "^9.0.2",
@@ -31,6 +33,6 @@
   },
   "devDependencies": {
     "nodemon": "^3.1.10",
-    "prisma": "^6.10.1"
+    "prisma": "^6.11.0"
   }
 }
