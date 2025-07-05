@@ -33,7 +33,7 @@ Aplicação de troca de itens criada em Node.js com Express. A aplicação consi
    ```bash
    git clone -b dev https://github.com/laracmiranda/Projeto_AvantiBootcamp.git
    cd Projeto_AvantiBootcamp
-````
+   ```
 
 2. **Instale as dependências**:
 
@@ -113,8 +113,6 @@ src/
 prisma/          # Prisma (schema.prisma)
 ├── schema.prisma
 └── migrations/
-
-index.js
 ```
 
 ---
