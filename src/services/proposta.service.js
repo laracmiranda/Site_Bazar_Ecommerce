@@ -22,7 +22,7 @@ export const criarProposta = async ({ item_ofertado, item_desejado, cpf_proponen
         throw new Error("Item desejado não encontrado.");
     }
 
-    if (itemDesejado.cpf_dono === cpf_proponente) {  // corrigi aqui para cpf_dono
+    if (itemDesejado.cpf_dono === cpf_proponente) {  
         throw new Error("Você não pode propor troca com seu próprio item.");
     }
 

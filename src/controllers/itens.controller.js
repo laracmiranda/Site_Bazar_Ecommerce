@@ -1,64 +1,64 @@
 import {
-  listarItens, 
+  listarItens,
   buscarItemPorId,
   criarItem,
   atualizarItem,
   removerItem,
   listarItensAtivos,
-  listarItensPorDono
+  listarItensPorDono,
+  listarItensPorCategoria,
+  buscarItensPorPalavraChave
 } from '../services/itens.service.js';
-
 
 export const getItens = async (req, res) => {
   try {
     const itens = await listarItens();
-    res.status(200).json(itens)
-  } catch (error){
-    res.status(500).json({erro: 'Erro ao listar itens', mensagem: error.message});    
+    res.status(200).json(itens);
+  } catch (error) {
+    res.status(500).json({ erro: 'Erro ao listar itens', mensagem: error.message });
   }
 };
 
 export const getItemPorId = async (req, res) => {
-  try{
+  try {
     const id = parseInt(req.params.id);
     const item = await buscarItemPorId(id);
 
-    if(!item) return res.status(404).json({erro: 'Item não encontrado'});
+    if (!item) return res.status(404).json({ erro: 'Item não encontrado' });
     res.status(200).json(item);
-  } catch(error){
-    res.status(500).json({erro: 'Erro ao buscar o item', mensagem: error.message});
+  } catch (error) {
+    res.status(500).json({ erro: 'Erro ao buscar o item', mensagem: error.message });
   }
 };
 
-export const postItem = async (req, res) =>{
-  try{
+export const postItem = async (req, res) => {
+  try {
     const novoItem = await criarItem(req.body);
     res.status(201).json(novoItem);
-  } catch(error){
-    res.status(400).json({erro: 'Erro ao cadastrar o item', mensagem: error.message});
+  } catch (error) {
+    res.status(400).json({ erro: 'Erro ao cadastrar o item', mensagem: error.message });
   }
 };
 
 export const putItem = async (req, res) => {
-  try{
+  try {
     const id = parseInt(req.params.id);
     const atualizado = await atualizarItem(id, req.body);
-    res.status(200).json(atualizado)
-  }  catch(error){
-    res.status(400).json({erro: 'Erro ao atualizar o item', mensagem: error.message});
+    res.status(200).json(atualizado);
+  } catch (error) {
+    res.status(400).json({ erro: 'Erro ao atualizar o item', mensagem: error.message });
   }
 };
 
 export const deleteItem = async (req, res) => {
-  try{
+  try {
     const id = parseInt(req.params.id);
     await removerItem(id);
     res.status(204).send();
-  }  catch(error){
-    res.status(400).json({erro: 'Erro ao deletar item', mensagem: error.message})
+  } catch (error) {
+    res.status(400).json({ erro: 'Erro ao deletar item', mensagem: error.message });
   }
 };
-
 
 export const getItensAtivos = async (req, res) => {
   try {
@@ -81,5 +81,35 @@ export const getItensPorDono = async (req, res) => {
     res.status(200).json(itens);
   } catch (error) {
     res.status(500).json({ erro: 'Erro ao buscar itens do dono', mensagem: error.message });
+  }
+};
+
+export const getItensPorCategoria = async (req, res) => {
+  try {
+    const { categoria } = req.params;
+    const itens = await listarItensPorCategoria(categoria);
+
+    if (!itens || itens.length === 0) {
+      return res.status(404).json({ erro: 'Nenhum item encontrado para esta categoria' });
+    }
+
+    res.status(200).json(itens);
+  } catch (error) {
+    res.status(500).json({ erro: 'Erro ao buscar por categoria', mensagem: error.message });
+  }
+};
+
+export const getItensPorPalavraChave = async (req, res) => {
+  try {
+    const { termo } = req.params;
+    const itens = await buscarItensPorPalavraChave(termo);
+
+    if (!itens || itens.length === 0) {
+      return res.status(404).json({ erro: 'Nenhum item encontrado com esse termo' });
+    }
+
+    res.status(200).json(itens);
+  } catch (error) {
+    res.status(500).json({ erro: 'Erro na busca por palavra-chave', mensagem: error.message });
   }
 };

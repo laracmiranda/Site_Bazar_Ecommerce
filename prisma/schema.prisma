@@ -13,7 +13,7 @@ model itens {
   id_item                                Int        @id @default(autoincrement())
   nome                                   String     @db.VarChar(100)
   descricao                              String     @db.VarChar(100)
-  categoria                              String     @db.VarChar(100)
+  categoria                              String?    
   status_item                            Boolean    @default(true)
   imagem                                 String?    
   cpf_dono                               String?    @db.Char(11)
