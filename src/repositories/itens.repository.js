@@ -1,48 +1,90 @@
 import prisma from '../prisma/client.js';
 
 class itensRepository {
-    findAll() {
-        return prisma.itens.findMany({
-            //puxa os itens com os donos
-            include: {
-                usuarios: true
-            }
-        })
-    };
+  findAll() {
+    return prisma.itens.findMany({
+      include: {
+        donoItem: true, 
+      },
+    });
+  }
 
-    findById(id) {
-        return prisma.itens.findUnique({
-            where: {
-                id_item: id
+  findById(id) {
+    return prisma.itens.findUnique({
+      where: { id_item: id },
+      include: { donoItem: true },
+    });
+  }
+
+  findAtivos() {
+    return prisma.itens.findMany({
+      where: {
+        status_item: true,
+      },
+      include: {
+        donoItem: true,
+      },
+    });
+  }
+
+  findByCategoria = async (categoria) => {
+    return await prisma.itens.findMany({
+        where: {
+            categoria: {
+                contains: categoria,
+                mode: 'insensitive'
             },
-            //puxa o dono do item
-            include: {
-                usuarios: true
-            }
-        });
-    };
+            status_item: true
+        }
+    });
+};
 
-    create(dados) {
-        return prisma.itens.create({data: dados});
-    };
+findPorPalavraChave = async (termo) => {
+    return await prisma.itens.findMany({
+        where: {
+            AND: [
+                { status_item: true },
+                {
+                    OR: [
+                        { nome: { contains: termo, mode: 'insensitive' } },
+                        { descricao: { contains: termo, mode: 'insensitive' } }
+                    ]
+                }
+            ]
+        }
+    });
+};
 
-    update(id, dados) {
-        return prisma.itens.update({
-            where: {
-                id_item: id
-            }, 
-            data: dados,
-        });
-    };
 
-    delete(id) {
-        return prisma.itens.delete({
-            where: {
-                id_item: id
-            }
-        })
-    }
+  findByDono(cpf) {
+    return prisma.itens.findMany({
+      where: {
+        cpf_dono: cpf,
+      },
+      include: {
+        donoItem: true,
+      },
+    });
+  }
+
+  create(dados) {
+    return prisma.itens.create({
+      data: dados,
+    });
+  }
+
+  update(id, dados) {
+    return prisma.itens.update({
+      where: { id_item: id },
+      data: dados,
+    });
+  }
+
+  delete(id) {
+    return prisma.itens.delete({
+      where: { id_item: id },
+    });
+  }
 }
-
 
 export default new itensRepository();
