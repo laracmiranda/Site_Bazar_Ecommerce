@@ -1,24 +1,27 @@
 import { useState } from 'react'
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Navbar from './components/Navbar';
+import { AuthProvider } from './context/AuthContext';
 import Home from './pages/Home';
-import MeusItens from './pages/MeusItens';
-
+import CadastroUser from './pages/CadastroUser';
+import Login from './pages/Login';
 
 function App() {
-  const [count, setCount] = useState(0)
 
-  return (
+  return <>
     <BrowserRouter>
-       <Navbar />
-      <div className="p-4">
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/MeusItens" element={<MeusItens />} />
-        </Routes>
-      </div>
+      <AuthProvider>
+        <Navbar />
+          
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/cadastro" element={<CadastroUser />} />
+          </Routes>
+          
+      </AuthProvider>
     </BrowserRouter>
-  )
+  </>
 }
 
 export default App;
