@@ -35,7 +35,7 @@ export default function Login() {
         type="text"
         value={cpf}
         onChange={(e) => setCPF(e.target.value)}
-        placeholder="Email"
+        placeholder="Insira seu CPF"
         className="w-full border p-2 rounded"
       />
       <input
