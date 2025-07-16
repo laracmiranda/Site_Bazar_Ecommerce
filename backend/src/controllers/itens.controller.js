@@ -1,5 +1,5 @@
 import cloudinary from '../config/cloudinary.js';
-import fs from 'fs';
+import streamifier from 'streamifier';
 
 import {
   listarItens,
@@ -36,19 +36,35 @@ export const getItemPorId = async (req, res) => {
 
 export const postItem = async (req, res) => {
   try {
-    const dadosItem = req.body;
+    const dadosItem = {
+      ...req.body,
+      status_item: req.body.status_item === 'true',
+      cpf_dono: req.usuario.cpf, // Puxa o CPF do usuário autenticado
+    };
+    console.log('req.file:', req.file);
+
+    if (!req.file || !req.file.buffer) {
+      return res.status(400).json({ erro: 'Arquivo não encontrado', mensagem: 'Nenhuma imagem foi enviada' });
+    }
 
     // Faz o upload da imagem para o Cloudinary
-    const resultado = await cloudinary.uploader.upload(req.file.path, {
-      folder: 'itens',
+    const resultado = await new Promise((resolve, reject) => {
+      const uploadStream = cloudinary.uploader.upload_stream({folder: 'itens'},
+        (error, result) => {
+          if (error) return reject(error);
+          resolve(result);
+        }
+      ); 
+
+      streamifier.createReadStream(req.file.buffer).pipe(uploadStream);
     });
 
     // Apaga o arquivo temporário
-    fs.unlinkSync(req.file.path);
+    //fs.unlinkSync(req.file.path);
 
     // Salva a URL da imagem no corpo do item
     dadosItem.imagem = resultado.secure_url;
-
+    
     const novoItem = await criarItem(dadosItem);
     res.status(201).json(novoItem);
   } catch (error) {
