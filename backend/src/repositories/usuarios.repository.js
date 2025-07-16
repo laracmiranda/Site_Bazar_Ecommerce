@@ -18,10 +18,9 @@ class usuariosRepository {
             where: {
                 cpf
             },
-            //Recupera os itens do usuário que esse usuário é dono
-            include: {
-                itens: true
-            }
+           select: {
+                cpf: true, senha: true
+            },
         });
     };
 

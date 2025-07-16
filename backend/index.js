@@ -5,14 +5,14 @@ import cookieParser from "cookie-parser";
 import authRouter from './src/routes/auth.routes.js'
 
 
-
 const app = express();
+const corsOptions = {origin: "http://localhost:5173", credentials: true};
 
 //Tratar JSON
 app.use(express.json());
 
 //Acesso para API
-app.use(cors());
+app.use(cors(corsOptions));
 
 //biblioteca cookies
 app.use(cookieParser());
