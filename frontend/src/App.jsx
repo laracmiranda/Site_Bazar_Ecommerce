@@ -7,6 +7,7 @@ import Registro from './pages/Registro';
 import Login from './pages/Login';
 import MeusItens from './pages/MeusItens';
 import Propostas from './pages/Propostas';
+import CadastroItem from './pages/CadastroItem';
 
 function App() {
 
@@ -21,6 +22,7 @@ function App() {
             <Route path="/registro" element={<Registro />} />
             <Route path="/meus-itens" element={<MeusItens />} />
             <Route path="/propostas" element={<Propostas />} />
+            <Route path="/cadastro-item" element={<CadastroItem />} />
           </Routes>
           
       </AuthProvider>

@@ -1,5 +1,5 @@
 import { useAuth } from "../context/AuthContext";
-import { Search, Package, Users, Repeat } from 'lucide-react';
+import { Search, Smile, Tag, Instagram, Twitter, ListFilter, MoveRight } from 'lucide-react';
 
 
 export default function Home() {
@@ -12,26 +12,35 @@ export default function Home() {
   };
   return <>
     <div className="bg-[#f4f4f4] w-full h-full">
+    {!isAuthenticated && (
     <section className="h-80 w-full bg-[#B06D6D] py-1 px-1">
+        
         <div className="flex flex-col items-center justify-center py-10 text-white text-center gap-8">
             <h1 className="text-5xl font-bold">Negocie. Troque. Descubra.</h1>
             <p className="">Junte-se ao nosso mercado impulsionado pela comunidade, <br />onde cada item tem o potencial de uma nova história</p>
-            {!isAuthenticated && (
+            
             <button className="font-semibold rounded-md border border-white w-50 h-12 hover:bg-white hover:text-[#B06D6D] cursor-pointer">Cadastre-se</button>
-            )}
+            
         </div>
     </section>
-    
+    )}
+
     {/* Busca e filtro */}
     <section className="bg-white py-4 px-4 md:px-8 flex flex-col md:flex-row items-center gap-4 shadow justify-center">
         <div className="flex items-center border rounded w-full md:w-1/2 px-3 py-2">
           <Search className="w-4 h-4 text-gray-500 mr-2" />
           <input className="w-full outline-none" placeholder="Buscar Itens" />
         </div>
-        <select className="border rounded px-3 py-2 w-full md:w-auto">
-          <option>Todas as categorias</option>
-          <option>Roupas</option>
-        </select>
+        <div className="flex items-center border rounded w-full md:w-1/4 px-3 py-2">
+            <ListFilter className="w-4 h-4 text-gray-500 mr-2"/>
+            <select className="w-full outline-none text-gray-500">
+                <option>Todas as categorias</option>
+                <option>Roupas</option>
+                <option>Casacos</option>
+                <option>Eletrônicos</option>
+            </select>
+        </div>
+
     </section>
     
     {/* Estatísticas */}
