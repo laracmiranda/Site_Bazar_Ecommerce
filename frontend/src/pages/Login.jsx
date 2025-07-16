@@ -2,6 +2,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { User, Lock, Eye, EyeOff , Mail, MapPin} from 'lucide-react';
 
 export default function Login() {
   const { login } = useAuth();

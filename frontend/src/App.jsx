@@ -15,7 +15,7 @@ function App() {
     <BrowserRouter>
       <AuthProvider>
         <Navbar />
-          
+ 
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/login" element={<Login />} />
