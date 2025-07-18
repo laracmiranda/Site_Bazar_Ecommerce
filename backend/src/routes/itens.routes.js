@@ -1,7 +1,6 @@
 import express from 'express';
 import {
   getItens,
-  getItemPorId,
   postItem,
   putItem,
   deleteItem,
@@ -19,13 +18,13 @@ const upload = multer({ storage: multer.memoryStorage()});
 
 // Rotas específicas
 router.get('/ativos', getItensAtivos);
-router.get('/dono/:cpf', getItensPorDono);
+router.get('/meus-itens', autenticar, getItensPorDono);
 router.get('/categoria/:categoria', getItensPorCategoria);         
 router.get('/buscar/:termo', getItensPorPalavraChave);           
 
 // Rotas padrão
 router.get('/', getItens);
-router.get('/:id', getItemPorId);
+//router.get('/:id', getItemPorId);
 router.post('/', autenticar, upload.single('imagem'), postItem);
 router.put('/:id', putItem);
 router.delete('/:id', deleteItem);

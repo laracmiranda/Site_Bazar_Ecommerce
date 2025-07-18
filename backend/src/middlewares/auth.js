@@ -9,6 +9,9 @@ export const autenticar = (req, res, next) => {
     if (!token) {
         return res.status(401).json({ erro: 'Acesso não autorizado!' });
     }
+        const usuario = jwt.verify(token, process.env.JWT_SECRET);
+        req.usuario = usuario; 
+
         try {
             const decodific = jwt.verify(token, SECRET);
             console.log('Middleware autenticar: usuário decodificado =>', decodific);

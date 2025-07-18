@@ -3,7 +3,6 @@ import streamifier from 'streamifier';
 
 import {
   listarItens,
-  buscarItemPorId,
   criarItem,
   atualizarItem,
   removerItem,
@@ -19,18 +18,6 @@ export const getItens = async (req, res) => {
     res.status(200).json(itens);
   } catch (error) {
     res.status(500).json({ erro: 'Erro ao listar itens', mensagem: error.message });
-  }
-};
-
-export const getItemPorId = async (req, res) => {
-  try {
-    const id = parseInt(req.params.id);
-    const item = await buscarItemPorId(id);
-
-    if (!item) return res.status(404).json({ erro: 'Item não encontrado' });
-    res.status(200).json(item);
-  } catch (error) {
-    res.status(500).json({ erro: 'Erro ao buscar o item', mensagem: error.message });
   }
 };
 
@@ -104,11 +91,17 @@ export const getItensAtivos = async (req, res) => {
 
 export const getItensPorDono = async (req, res) => {
   try {
-    const cpf = req.params.cpf;
+    const cpf = req.usuario?.cpf; 
+    console.log('Controller getItensPorDono - CPF:', cpf);
+
+    if (!cpf) {
+      return res.status(400).json({ erro: 'CPF não encontrado no token' });
+    }
+
     const itens = await listarItensPorDono(cpf);
 
     if (!itens || itens.length === 0) {
-      return res.status(404).json({ erro: 'Nenhum item encontrado para este dono' });
+      return res.status(200).json([]);
     }
 
     res.status(200).json(itens);
@@ -129,8 +122,9 @@ export const getItensPorCategoria = async (req, res) => {
     res.status(200).json(itens);
   } catch (error) {
     res.status(500).json({ erro: 'Erro ao buscar por categoria', mensagem: error.message });
-  }
+  };
 };
+
 
 export const getItensPorPalavraChave = async (req, res) => {
   try {

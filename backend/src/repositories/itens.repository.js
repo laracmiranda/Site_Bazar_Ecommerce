@@ -9,12 +9,12 @@ class itensRepository {
     });
   }
 
-  findById(id) {
+  /*findById(id) {
     return prisma.itens.findUnique({
       where: { id_item: id },
       include: { donoItem: true },
     });
-  }
+  }*/
 
   findAtivos() {
     return prisma.itens.findMany({
@@ -27,7 +27,35 @@ class itensRepository {
     });
   }
 
-  findByCategoria = async (categoria) => {
+  findByCategoria(categoria) {
+  return prisma.itens.findMany({
+    where: {
+      categoria: {
+        contains: categoria,
+        mode: 'insensitive'
+      },
+      status_item: true
+    }
+  });
+}
+
+findPorPalavraChave(termo) {
+  return prisma.itens.findMany({
+    where: {
+      AND: [
+        { status_item: true },
+        {
+          OR: [
+            { nome: { contains: termo, mode: 'insensitive' } },
+            { descricao: { contains: termo, mode: 'insensitive' } }
+          ]
+        }
+      ]
+    }
+  });
+}
+
+  /*findByCategoria = async (categoria) => {
     return await prisma.itens.findMany({
         where: {
             categoria: {
@@ -53,7 +81,7 @@ findPorPalavraChave = async (termo) => {
             ]
         }
     });
-};
+};*/
 
 
   findByDono(cpf) {
