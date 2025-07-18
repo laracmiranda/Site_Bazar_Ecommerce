@@ -52,7 +52,7 @@ export default function CadastroItem() {
       setMessage(data.message || 'Item cadastrado com sucesso!');
       setForm({ nome: '', descricao: '', categoria: '', status_item: false });
       setImagem(null);
-    } catch (err) {
+    } catch (error) {
       setMessage('Erro ao cadastrar item');
     }
   };
