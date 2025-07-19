@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import { AuthProvider } from './context/AuthContext';
@@ -8,6 +7,7 @@ import Login from './pages/Login';
 import MeusItens from './pages/MeusItens';
 import Propostas from './pages/Propostas';
 import CadastroItem from './pages/CadastroItem';
+import EditarItem from './pages/EditarItem';
 
 function App() {
 
@@ -21,8 +21,10 @@ function App() {
             <Route path="/login" element={<Login />} />
             <Route path="/registro" element={<Registro />} />
             <Route path="/meus-itens" element={<MeusItens />} />
-            <Route path="/propostas" element={<Propostas />} />
             <Route path="/cadastro-item" element={<CadastroItem />} />
+            <Route path="/editar-item/:id" element={<EditarItem />} />
+            <Route path="/propostas" element={<Propostas />} />
+            
           </Routes>
           
       </AuthProvider>
