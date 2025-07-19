@@ -9,12 +9,6 @@ class itensRepository {
     });
   }
 
-  findById(id) {
-    return prisma.itens.findUnique({
-      where: { id_item: id },
-      include: { donoItem: true },
-    });
-  }
 
   findAtivos() {
     return prisma.itens.findMany({
@@ -27,34 +21,33 @@ class itensRepository {
     });
   }
 
-  findByCategoria = async (categoria) => {
-    return await prisma.itens.findMany({
-        where: {
-            categoria: {
-                contains: categoria,
-                mode: 'insensitive'
-            },
-            status_item: true
-        }
-    });
-};
+  findByCategoria(categoria) {
+  return prisma.itens.findMany({
+    where: {
+      categoria: {
+        contains: categoria,
+        mode: 'insensitive'
+      },
+      status_item: true
+    }
+  });
+}
 
-findPorPalavraChave = async (termo) => {
-    return await prisma.itens.findMany({
-        where: {
-            AND: [
-                { status_item: true },
-                {
-                    OR: [
-                        { nome: { contains: termo, mode: 'insensitive' } },
-                        { descricao: { contains: termo, mode: 'insensitive' } }
-                    ]
-                }
-            ]
+findPorPalavraChave(termo) {
+  return prisma.itens.findMany({
+    where: {
+      AND: [
+        { status_item: true },
+        {
+          OR: [
+            { nome: { contains: termo, mode: 'insensitive' } },
+            { descricao: { contains: termo, mode: 'insensitive' } }
+          ]
         }
-    });
-};
-
+      ]
+    }
+  });
+}
 
   findByDono(cpf) {
     return prisma.itens.findMany({
@@ -66,6 +59,16 @@ findPorPalavraChave = async (termo) => {
       },
     });
   }
+
+  findById(id) {
+  return prisma.itens.findUnique({
+    where: { id_item: id },
+    include: {
+      donoItem: true,
+    },
+  });
+}
+
 
   create(dados) {
     return prisma.itens.create({

@@ -1,7 +1,7 @@
 // src/components/Navbar.jsx
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { Home, Package, ShoppingBag, LogOut, Mail } from 'lucide-react'; // opcional, ícone
+import { Home, Archive, ShoppingBag, LogOut } from 'lucide-react'; // opcional, ícone
 
 export default function Navbar() {
   const { isAuthenticated, logout } = useAuth();
@@ -35,8 +35,8 @@ export default function Navbar() {
           <Link to="/" className="flex items-center gap-1 text-[#4E4E4E] text-sm hover:text-[#B06D6D]">
             <Home size={15} /> Home
           </Link>
-          <Link to="/login" className="flex items-center gap-1 text-[#4E4E4E] text-sm hover:text-[#B06D6D]">
-          <Package size={15}/>Meus itens
+          <Link to="/meus-itens" className="flex items-center gap-1 text-[#4E4E4E] text-sm hover:text-[#B06D6D]">
+          <Archive size={15}/>Meus itens
           </Link>
           <Link to="/login" className="flex items-center gap-1 text-[#4E4E4E] text-sm hover:text-[#B06D6D]">
           <ShoppingBag size={15}/>Propostas
