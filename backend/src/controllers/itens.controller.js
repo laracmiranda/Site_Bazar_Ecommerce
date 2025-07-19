@@ -107,8 +107,20 @@ export const putItem = async (req, res) => {
 export const deleteItem = async (req, res) => {
   try {
     const id = parseInt(req.params.id);
+    console.log('ID recebido para delete:', id);
+
+    if (isNaN(id)) {
+      return res.status(400).json({ erro: 'ID inválido' });
+    }
+
+    //busca se o item existe
+    const item = await buscarItemPorId(id);
+    if (!item) {
+      return res.status(404).json({ erro: 'Item não encontrado' });
+    }
+
     await removerItem(id);
-    res.status(204).send();
+    res.status(200).json({message: 'Item deletado com sucesso'});
   } catch (error) {
     res.status(400).json({ erro: 'Erro ao deletar item', mensagem: error.message });
   }

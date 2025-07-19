@@ -29,6 +29,29 @@ export default function MeusItens() {
     fetchItens();
   }, []);
 
+  async function handleDelete(id) {
+  try {
+    const res = await fetch(`http://localhost:3000/itens/${id}`, {
+      method: 'DELETE',
+      credentials: 'include', // se precisar de cookie/token
+    });
+
+    if (!res.ok) {
+      throw new Error('Erro ao deletar o item');
+    }
+
+    const data = await res.json();
+    alert(data.message);
+
+    // Atualiza a lista local, removendo o item deletado
+    setItens((prevItens) => prevItens.filter(item => item.id_item !== id));
+
+    // Atualize a lista local, ex: removendo o item deletado do state
+  } catch (error) {
+    alert(error.message);
+  }
+}
+
   return (
     <div>
       <div className='flex flex-row justify-between items-center py-10 px-40 md:px-30'>
@@ -56,7 +79,9 @@ export default function MeusItens() {
           <Link to={`/editar-item/${item.id_item}`} className="w-full flex justify-center items-center gap-1 bg-[#F3F4F6] text-[#374151] text-sm py-1 px-2 rounded-sm hover:bg-[#e4e9f3]">
             <SquarePen size={14} /> Editar
           </Link>
-          <button className="w-full flex justify-center items-center gap-1 bg-[#FEE2E2] text-[#B91C1C] text-sm py-1 px-2 rounded-sm hover:bg-[#f1cdcd]">
+          <button 
+          onClick={() => handleDelete(item.id_item)} 
+          className="w-full flex justify-center items-center gap-1 bg-[#FEE2E2] text-[#B91C1C] text-sm py-1 px-2 rounded-sm hover:bg-[#f1cdcd] cursor-pointer">
             <Trash size={14} /> Excluir
           </button>
         </div>
