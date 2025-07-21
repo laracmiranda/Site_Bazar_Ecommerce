@@ -75,7 +75,12 @@ export default function Home() {
               </div>
               <div className="flex items-center justify-between mt-auto">
                 <span className="text-xs text-gray-500">Lara</span>
-                <button className="bg-rose-300 text-white px-2 py-1 text-sm rounded">Fazer proposta</button>
+                {!isAuthenticated ? (
+                  <p className="text-xs text-gray-500">Entre para ofertar</p>
+                ) : (
+                  <button className="bg-rose-300 text-white px-2 py-1 text-sm rounded">Fazer proposta</button>
+                )}
+                
               </div>
             </div>
           ))}
