@@ -1,7 +1,8 @@
 import { useAuth } from "../context/AuthContext";
-import { Search, Smile, Tag, Instagram, Twitter, ListFilter, ArrowDownToDot} from 'lucide-react';
+import { Search, Smile, Tag, ListFilter} from 'lucide-react';
 import { useEffect, useState } from "react";
 import { Navigate, useNavigate } from "react-router-dom";
+import Footer from "../components/Footer";
 
 
 export default function Home() {
@@ -82,7 +83,7 @@ export default function Home() {
     </section>
     
     {/* Estatísticas */}
-    <section className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-center p-4 md:px-8">
+    <section className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-center p-4 md:px-30 ">
         <div className="bg-white shadow rounded p-4">
           <p className="text-2xl font-bold">{quantidadeAtivos}</p>
           <p className="text-gray-500">Itens disponíveis</p>
@@ -98,7 +99,7 @@ export default function Home() {
     </section>
 
     {/* Lista de Itens */}
-      <section className="px-4 md:px-8 py-6 flex-1">
+      <section className="px-4 md:px-30 py-6 flex-1">
         <h3 className="text-xl font-semibold mb-4 text-[#B06D6D]">Itens disponíveis</h3>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
            {filteredItens.map((item) => (
@@ -135,5 +136,6 @@ export default function Home() {
         </div>
       </section>
       </div>
+      <Footer/>
   </>;
 }
