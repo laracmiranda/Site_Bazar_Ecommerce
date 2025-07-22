@@ -117,10 +117,13 @@ export default function EditarItem() {
             required
           >
             <option value="">Selecione uma categoria</option>
-            <option value="eletronicos">Eletrônicos</option>
-            <option value="livros">Livros</option>
-            <option value="roupas">Roupas</option>
-            <option value="outros">Outros</option>
+            <option value="">Selecione uma categoria</option>
+            <option value="Moda">Moda</option>
+            <option value="Eletrônicos">Eletrônicos</option>
+            <option value="Livros">Livros</option>
+            <option value="Casa">Casa</option>
+            <option value="Celulares">Celulares</option>
+            <option value="Outros">Outros</option>
           </select>
         </div>
 
