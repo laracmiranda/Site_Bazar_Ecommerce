@@ -1,6 +1,6 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Navbar from './components/Navbar';
-import { AuthProvider, useAuth } from './context/AuthContext';
+import { useAuth } from './context/AuthContext';
 import Home from './pages/Home';
 import Registro from './pages/Registro';
 import Login from './pages/Login';
@@ -9,6 +9,7 @@ import Propostas from './pages/Propostas';
 import CadastroItem from './pages/CadastroItem';
 import EditarItem from './pages/EditarItem';
 import PrivateRoute from './components/PrivateRoute';
+import Footer from './components/Footer';
 
 function App() {
   const { isAuthenticated } = useAuth();
@@ -32,7 +33,6 @@ function App() {
       <Route path="/propostas" element={<PrivateRoute><Propostas /></PrivateRoute>} />
             
     </Routes>
-
   </BrowserRouter>
   </>
 }
