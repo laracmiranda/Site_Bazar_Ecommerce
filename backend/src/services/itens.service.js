@@ -35,3 +35,7 @@ export const listarItensAtivos = async () => {
 export const listarItensPorDono = async (cpf) => {
     return await itensRepository.findByDono(cpf);
 };
+
+export const contarItensAtivos = async () => {
+  return await itensRepository.countAtivos();
+};

@@ -9,7 +9,7 @@ import {
   getItensPorCategoria,
   getItemPorId,
   getItensPorPalavraChave,
-  contarItens
+  countItensAtivos
 } from '../controllers/itens.controller.js';
 import { autenticar } from '../middlewares/auth.js';
 
@@ -20,7 +20,7 @@ const upload = multer({ storage: multer.memoryStorage()});
 
 // Rotas específicas
 router.get('/ativos', getItensAtivos);
-router.get('/contagem', contarItens);  
+router.get('/ativos/quantidade', countItensAtivos);  
 router.get('/meus-itens', autenticar, getItensPorDono);
 router.get('/:id', getItemPorId);
 router.get('/categoria/:categoria', getItensPorCategoria);         

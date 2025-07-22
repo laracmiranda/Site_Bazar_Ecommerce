@@ -12,27 +12,24 @@ export default function Home() {
       navigate("/registro");
     };
 
-    const items = Array(6).fill(null);
-    const [stats, setStats] = useState ({
-      items: 0, 
-      users: 874,
-      exchanges: 1200,
-    });
+    
 
-  useEffect(() => {
-  async function fetchCount() {
-    try {
-      const res = await fetch('http://localhost:3000/itens/contagem');
-      if (!res.ok) throw new Error('Erro ao buscar contagem');
+    const [itens, setItens] = useState([]);
+    const [quantidadeAtivos, setQuantidadeAtivos] = useState(0);
 
-      const data = await res.json();
-      setStats(prev => ({ ...prev, items: data.total }));
-    } catch (error) {
-      console.error('Erro ao buscar a contagem de itens:', error);
-    }
-  }
-  fetchCount();
-}, []);
+    useEffect(() => {
+    // Buscar os itens ativos
+    fetch("http://localhost:3000/itens/ativos")
+      .then((res) => res.json())
+      .then((data) => setItens(data))
+      .catch((err) => console.error("Erro ao buscar itens ativos:", err));
+
+    // Buscar a quantidade de itens ativos
+    fetch("http://localhost:3000/itens/ativos/quantidade")
+      .then((res) => res.json())
+      .then((data) => setQuantidadeAtivos(data.quantidade))
+      .catch((err) => console.error("Erro ao buscar contagem:", err));
+    }, []);
 
   return <>
     <div className="bg-[#f4f4f4] w-full h-full">
@@ -72,15 +69,15 @@ export default function Home() {
     {/* Estatísticas */}
     <section className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-center p-4 md:px-8">
         <div className="bg-white shadow rounded p-4">
-          <p className="text-2xl font-bold">{stats.items}</p>
+          <p className="text-2xl font-bold">{quantidadeAtivos}</p>
           <p className="text-gray-500">Itens disponíveis</p>
         </div>
         <div className="bg-white shadow rounded p-4">
-          <p className="text-2xl font-bold">{stats.users}</p>
+          <p className="text-2xl font-bold">823</p>
           <p className="text-gray-500">Usuários felizes</p>
         </div>
         <div className="bg-white shadow rounded p-4">
-          <p className="text-2xl font-bold">{stats.exchanges}</p>
+          <p className="text-2xl font-bold">1200</p>
           <p className="text-gray-500">Trocas realizadas</p>
         </div>
     </section>
@@ -89,22 +86,32 @@ export default function Home() {
       <section className="px-4 md:px-8 py-6 flex-1">
         <h3 className="text-xl font-semibold mb-4">Itens disponíveis</h3>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-          {items.map((item, index) => (
-            <div key={index} className="bg-white rounded shadow p-3 flex flex-col">
-              <div className="bg-gray-200 h-40 rounded mb-3"></div>
+           {itens.map((item) => (
+            <div key={item.id_item} className="bg-white rounded shadow p-3 flex flex-col">
+              <img
+              src={item.imagem || "https://via.placeholder.com/150"}
+              alt={item.nome}
+              className="bg-gray-200 h-40 w-full object-cover rounded mb-3"
+              />
               <div className="flex-1">
                 <div className="flex justify-between items-center mb-1">
-                  <h4 className="font-semibold text-sm">Nome do Item</h4>
-                  <span className="text-xs bg-gray-100 px-2 py-0.5 rounded text-gray-600">Livros</span>
+                  <h4 className="font-semibold text-[#B06D6D] text-sm">{item.nome}</h4>
+                  <div className="flex flex-row gap-1 bg-gray-100 px-2 py-0.5 rounded items-center">
+                  <Tag className="w-2.5 h-2.5 stroke-[#4E4E4E]"/> 
+                  <span className="text-xs text-[#4E4E4E]">{item.categoria || "Categoria"}</span>
+                  </div>
                 </div>
-                <p className="text-sm text-gray-600 mb-3">Descrição completa do item aqui limitada em duas linhas...</p>
+                <p className="text-sm text-[#1E1E1E] mb-3">{item.descricao}</p>
               </div>
               <div className="flex items-center justify-between mt-auto">
-                <span className="text-xs text-gray-500">Lara</span>
+                <div className="flex flex-row gap-1 items-center">
+                  <Smile className="w-4 h-4 stroke-[#4E4E4E]"/>
+                  <span className="text-xs text-[#4E4E4E]">{item.donoItem?.nome || "Anônimo"}</span>
+                </div>
                 {!isAuthenticated ? (
-                  <p className="text-xs text-gray-500">Entre para ofertar</p>
+                  <p className="text-xs text-[#4E4E4E]">Entre para ofertar</p>
                 ) : (
-                  <button className="bg-rose-300 text-white px-2 py-1 text-sm rounded">Fazer proposta</button>
+                  <button className="bg-[#B06D6D] text-white px-2 py-1 text-sm rounded">Fazer proposta</button>
                 )}
                 
               </div>

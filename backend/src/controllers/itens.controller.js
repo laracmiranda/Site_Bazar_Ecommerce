@@ -10,7 +10,8 @@ import {
   listarItensPorDono,
   listarItensPorCategoria,
   buscarItemPorId,
-  buscarItensPorPalavraChave
+  buscarItensPorPalavraChave,
+  contarItensAtivos
 } from '../services/itens.service.js';
 import itensRepository from '../repositories/itens.repository.js';
 
@@ -208,11 +209,12 @@ export const getItensPorPalavraChave = async (req, res) => {
   }
 };
 
-export const contarItens = async (req, res) => {
+export const countItensAtivos = async (req, res) => {
   try {
-    const total = await itensRepository.count();
-    res.json({ total });
+    const quantidade = await contarItensAtivos();
+    res.status(200).json({ quantidade });
   } catch (error) {
-    res.status(500).json({ error: 'Erro ao contar itens' });
+    console.error("Erro ao contar itens ativos:", error);
+    res.status(500).json({ error: "Erro ao contar itens ativos" });
   }
 };
