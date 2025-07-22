@@ -69,6 +69,14 @@ findPorPalavraChave(termo) {
   });
 }
 
+  countAtivos() {
+  return prisma.itens.count({
+    where: {
+      status_item: true,
+    },
+  });
+}
+
 
   create(dados) {
     return prisma.itens.create({
