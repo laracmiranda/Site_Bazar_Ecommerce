@@ -1,5 +1,6 @@
 import { useAuth } from "../context/AuthContext";
 import { Search, Smile, Tag, Instagram, Twitter, ListFilter, MoveRight } from 'lucide-react';
+import { useEffect, useState } from "react";
 import { Navigate, useNavigate } from "react-router-dom";
 
 
@@ -12,11 +13,26 @@ export default function Home() {
     };
 
     const items = Array(6).fill(null);
-    const stats = {
-    items: 6, // Substituir por contagem real
-    users: 874,
-    exchanges: 1200,
-  };
+    const [stats, setStats] = useState ({
+      items: 0, 
+      users: 874,
+      exchanges: 1200,
+    });
+
+  useEffect(() => {
+  async function fetchCount() {
+    try {
+      const res = await fetch('http://localhost:3000/itens/contagem');
+      if (!res.ok) throw new Error('Erro ao buscar contagem');
+
+      const data = await res.json();
+      setStats(prev => ({ ...prev, items: data.total }));
+    } catch (error) {
+      console.error('Erro ao buscar a contagem de itens:', error);
+    }
+  }
+  fetchCount();
+}, []);
 
   return <>
     <div className="bg-[#f4f4f4] w-full h-full">

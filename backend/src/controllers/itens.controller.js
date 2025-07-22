@@ -12,6 +12,7 @@ import {
   buscarItemPorId,
   buscarItensPorPalavraChave
 } from '../services/itens.service.js';
+import itensRepository from '../repositories/itens.repository.js';
 
 export const getItens = async (req, res) => {
   try {
@@ -204,5 +205,14 @@ export const getItensPorPalavraChave = async (req, res) => {
     res.status(200).json(itens);
   } catch (error) {
     res.status(500).json({ erro: 'Erro na busca por palavra-chave', mensagem: error.message });
+  }
+};
+
+export const contarItens = async (req, res) => {
+  try {
+    const total = await itensRepository.count();
+    res.json({ total });
+  } catch (error) {
+    res.status(500).json({ error: 'Erro ao contar itens' });
   }
 };

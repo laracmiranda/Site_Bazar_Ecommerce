@@ -69,6 +69,10 @@ findPorPalavraChave(termo) {
   });
 }
 
+  count (){
+    return prisma.itens.count();
+  }
+
 
   create(dados) {
     return prisma.itens.create({
