@@ -1,15 +1,23 @@
 import { useAuth } from "../context/AuthContext";
 import { Search, Smile, Tag, Instagram, Twitter, ListFilter, MoveRight } from 'lucide-react';
+import { Navigate, useNavigate } from "react-router-dom";
 
 
 export default function Home() {
     const { isAuthenticated } = useAuth();
+    
+    const navigate = useNavigate();
+    const handleCadastroClick = () => {
+      navigate("/registro");
+    };
+
     const items = Array(6).fill(null);
     const stats = {
     items: 6, // Substituir por contagem real
     users: 874,
     exchanges: 1200,
   };
+
   return <>
     <div className="bg-[#f4f4f4] w-full h-full">
     {!isAuthenticated && (
@@ -19,7 +27,9 @@ export default function Home() {
             <h1 className="text-5xl font-bold">Negocie. Troque. Descubra.</h1>
             <p className="">Junte-se ao nosso mercado impulsionado pela comunidade, <br />onde cada item tem o potencial de uma nova história</p>
             
-            <button className="font-semibold rounded-md border border-white w-50 h-12 hover:bg-white hover:text-[#B06D6D] cursor-pointer">Cadastre-se</button>
+            <button onClick={handleCadastroClick} className="font-semibold rounded-md border border-white w-50 h-12 hover:bg-white hover:text-[#B06D6D] cursor-pointer">
+              Cadastre-se
+            </button>
             
         </div>
     </section>
