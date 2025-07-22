@@ -1,5 +1,5 @@
 import { useAuth } from "../context/AuthContext";
-import { Search, Smile, Tag, Instagram, Twitter, ListFilter, MoveRight } from 'lucide-react';
+import { Search, Smile, Tag, Instagram, Twitter, ListFilter, ArrowDownToDot} from 'lucide-react';
 import { useEffect, useState } from "react";
 import { Navigate, useNavigate } from "react-router-dom";
 
@@ -11,8 +11,6 @@ export default function Home() {
     const handleCadastroClick = () => {
       navigate("/registro");
     };
-
-    
 
     const [itens, setItens] = useState([]);
     const [quantidadeAtivos, setQuantidadeAtivos] = useState(0);
@@ -31,39 +29,56 @@ export default function Home() {
       .catch((err) => console.error("Erro ao buscar contagem:", err));
     }, []);
 
+    const [search, setSearch] = useState("");
+    const [filter, setFilter] = useState("Todas as categorias");
+    const filteredItens = itens.filter((itens) => {
+      const matchesSearch = [itens.nome, itens.descricao].some(field =>
+        field?.toLowerCase().includes(search.toLowerCase())
+      );
+      const matchesFilter = filter === "" || filter === "Todas as categorias" || itens.categoria?.toLowerCase() === filter.toLowerCase();
+
+    return matchesSearch && matchesFilter;
+    });
+
   return <>
     <div className="bg-[#f4f4f4] w-full h-full">
-    {!isAuthenticated && (
     <section className="h-80 w-full bg-[#B06D6D] py-1 px-1">
         
         <div className="flex flex-col items-center justify-center py-10 text-white text-center gap-8">
             <h1 className="text-5xl font-bold">Negocie. Troque. Descubra.</h1>
             <p className="">Junte-se ao nosso mercado impulsionado pela comunidade, <br />onde cada item tem o potencial de uma nova história</p>
             
+            {!isAuthenticated ? (
             <button onClick={handleCadastroClick} className="font-semibold rounded-md border border-white w-50 h-12 hover:bg-white hover:text-[#B06D6D] cursor-pointer">
               Cadastre-se
             </button>
-            
+            ) : (
+                <video autoPlay loop muted playsInLine width="70" height="70">
+                 <source src="/animations/arrow-down.webm" type="video/webm" />
+                  Seu navegador não suporta vídeos em .webm
+                </video>
+            )}
         </div>
     </section>
-    )}
 
     {/* Busca e filtro */}
     <section className="bg-white py-4 px-4 md:px-8 flex flex-col md:flex-row items-center gap-4 shadow justify-center">
-        <div className="flex items-center border rounded w-full md:w-1/2 px-3 py-2">
+        <div className="flex items-center border border-[#8D8D8D] rounded w-full md:w-1/2 px-3 py-2">
           <Search className="w-4 h-4 text-gray-500 mr-2" />
-          <input className="w-full outline-none" placeholder="Buscar Itens" />
+          <input className="w-full outline-none" placeholder="Buscar Itens" value={search} onChange={(e) => setSearch(e.target.value)} />
         </div>
-        <div className="flex items-center border rounded w-full md:w-1/4 px-3 py-2">
+        <div className="flex items-center border border-[#8D8D8D] rounded w-full md:w-1/4 px-3 py-2">
             <ListFilter className="w-4 h-4 text-gray-500 mr-2"/>
-            <select className="w-full outline-none text-gray-500">
+            <select className="w-full outline-none text-gray-500" value={filter} onChange={(e) => setFilter(e.target.value)}>
                 <option>Todas as categorias</option>
-                <option>Roupas</option>
-                <option>Casacos</option>
+                <option>Moda</option>
                 <option>Eletrônicos</option>
+                <option>Livros</option>
+                <option>Casa</option>
+                <option>Celulares</option>
+                <option>Outros</option>
             </select>
         </div>
-
     </section>
     
     {/* Estatísticas */}
@@ -84,9 +99,9 @@ export default function Home() {
 
     {/* Lista de Itens */}
       <section className="px-4 md:px-8 py-6 flex-1">
-        <h3 className="text-xl font-semibold mb-4">Itens disponíveis</h3>
+        <h3 className="text-xl font-semibold mb-4 text-[#B06D6D]">Itens disponíveis</h3>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-           {itens.map((item) => (
+           {filteredItens.map((item) => (
             <div key={item.id_item} className="bg-white rounded shadow p-3 flex flex-col">
               <img
               src={item.imagem || "https://via.placeholder.com/150"}
