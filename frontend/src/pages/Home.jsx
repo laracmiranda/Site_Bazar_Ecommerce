@@ -108,7 +108,7 @@ export default function Home() {
                 <img
                 src={item.imagem || "https://via.placeholder.com/150"}
                 alt={item.nome}
-                className="bg-gray-200 h-40 w-full rounded-t-lg object-cover mb-3 h-[283px]"
+                className="bg-gray-200 w-full rounded-t-lg object-cover mb-3 h-[283px]"
                 />
               </div>
               <div className="p-4">
