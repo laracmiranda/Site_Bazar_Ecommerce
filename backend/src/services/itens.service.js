@@ -4,10 +4,6 @@ export const listarItens = async () => {
     return await itensRepository.findAll();
 };
 
-export const buscarItemPorId = async (id) => {
-    return await itensRepository.findById(id);
-};
-
 export const criarItem = async (dados) => {
     return await itensRepository.create(dados);
 };
@@ -28,10 +24,18 @@ export const buscarItensPorPalavraChave = async (termo) => {
     return await itensRepository.buscarPorPalavraChave(termo);
 };
 
+export const buscarItemPorId = async (id_item) => {
+  return await itensRepository.findById(id_item);
+};
+
 export const listarItensAtivos = async () => {
     return await itensRepository.findAtivos();
 };
 
 export const listarItensPorDono = async (cpf) => {
     return await itensRepository.findByDono(cpf);
+};
+
+export const contarItensAtivos = async () => {
+  return await itensRepository.countAtivos();
 };

@@ -16,3 +16,18 @@ Instalando Tailwind
 ```bash
 npm install tailwindcss @tailwindcss/vite
 ```
+
+# Home Page
+import { Search, Smile, Tag, Instagram, Twitter, ListFilter } from 'lucide-react';
+
+# Login e cadastro
+import { User, Lock, Eye, EyeOff , Mail, MapPin} from 'lucide-react';
+
+# Itens
+import { Plus, Package, Archive, Trash, SquarePen } from 'lucide-react';
+
+# Cadastro Item
+import { Image } from 'lucide-react';
+
+# Propostas
+import { X, Check, User } from 'lucide-react';

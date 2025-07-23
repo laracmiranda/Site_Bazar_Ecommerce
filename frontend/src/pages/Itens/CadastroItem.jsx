@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-
+import { toast } from 'react-toastify';
+import { useNavigate } from 'react-router-dom';
 
 export default function CadastroItem() {
   const [form, setForm] = useState({
@@ -9,10 +10,8 @@ export default function CadastroItem() {
     status_item: false,
   });
   const [imagem, setImagem] = useState(null);
-  const [message, setMessage] = useState('');
-
-  // Exemplo de como obter o ID do usuário logado  const userId = localStorage.getItem('userId'); // ou contexto de autenticação
   const token = localStorage.getItem('token');
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -27,7 +26,7 @@ export default function CadastroItem() {
     e.preventDefault();
 
     if (!token) {
-      setMessage('Você precisa estar logado para cadastrar um item.');
+      toast.error('Você precisa estar logado para cadastrar um item.');
       return;
     }
 
@@ -38,22 +37,24 @@ export default function CadastroItem() {
     formData.append('status_item', form.status_item);
     formData.append('imagem', imagem);
 
-    console.log('Imagem enviada:', imagem);
-    console.log([...formData.entries()]);
-
     try {
       const res = await fetch('http://localhost:3000/itens', {
         method: 'POST',
         body: formData,
-        credentials: 'include', //envia os cookies
+        credentials: 'include',
       });
-      
-      const data = await res.json();
-      setMessage(data.message || 'Item cadastrado com sucesso!');
-      setForm({ nome: '', descricao: '', categoria: '', status_item: false });
-      setImagem(null);
-    } catch (err) {
-      setMessage('Erro ao cadastrar item');
+
+      if (res.ok) {
+        toast.success('Item cadastrado com sucesso!');
+        setForm({ nome: '', descricao: '', categoria: '', status_item: false });
+        setImagem(null);
+        setTimeout(() => navigate('/meus-itens'), 1000); // redireciona após 1s
+      } else {
+        toast.error('Falha ao cadastrar item');
+      }
+    } catch (error) {
+      console.error('Erro:', error);
+      toast.error('Erro ao cadastrar item');
     }
   };
 
@@ -94,10 +95,12 @@ export default function CadastroItem() {
             required
           >
             <option value="">Selecione uma categoria</option>
-            <option value="eletronicos">Eletrônicos</option>
-            <option value="livros">Livros</option>
-            <option value="roupas">Roupas</option>
-            <option value="outros">Outros</option>
+            <option value="Moda">Moda</option>
+            <option value="Eletrônicos">Eletrônicos</option>
+            <option value="Livros">Livros</option>
+            <option value="Casa">Casa</option>
+            <option value="Celulares">Celulares</option>
+            <option value="Outros">Outros</option>
           </select>
         </div>
 
@@ -123,12 +126,10 @@ export default function CadastroItem() {
           <label>Status do item (Disponível?)</label>
         </div>
 
-        <button type="submit" className="w-full bg-purple-600 text-white p-2 rounded">
+        <button type="submit" className="w-full bg-purple-600 text-white p-2 rounded hover:opacity-90">
           Cadastrar Item
         </button>
       </form>
-
-      {message && <p className="mt-4 text-center">{message}</p>}
     </div>
   );
 }
