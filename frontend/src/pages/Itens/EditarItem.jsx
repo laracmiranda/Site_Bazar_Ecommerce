@@ -1,5 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
+import { toast } from 'react-toastify';
+import { useNavigate } from 'react-router-dom';
 
 export default function EditarItem() {
   const { id } = useParams();
@@ -13,6 +15,7 @@ export default function EditarItem() {
   const [imagem, setImagem] = useState(null);
   const [message, setMessage] = useState('');
   const token = localStorage.getItem('token');
+  const navigate = useNavigate();
 
   useEffect(() => {
     // Buscar dados do item para preencher o formulário
@@ -73,9 +76,10 @@ export default function EditarItem() {
     }
 
       const data = await res.json();
-      setMessage(data.message || 'Item atualizado com sucesso!');
+      toast.success(data.message || 'Item atualizado com sucesso!');
+      setTimeout(() => navigate('/meus-itens'), 1000); // redireciona após 1s
     } catch (error) {
-      setMessage('Erro ao atualizar item');
+      toast.error('Erro ao atualizar item');
     }
   };
 

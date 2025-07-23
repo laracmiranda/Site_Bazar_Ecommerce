@@ -2,14 +2,14 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import { useAuth } from './context/AuthContext';
 import Home from './pages/Home';
-import Registro from './pages/Registro';
-import Login from './pages/Login';
-import MeusItens from './pages/MeusItens';
-import Propostas from './pages/Propostas';
-import CadastroItem from './pages/CadastroItem';
-import EditarItem from './pages/EditarItem';
+import Registro from './pages/Login/Registro';
+import Login from './pages/Login/Login';
+import MeusItens from './pages/Itens/MeusItens';
+import Propostas from './pages/Propostas/Propostas';
+import CadastroItem from './pages/Itens/CadastroItem';
+import EditarItem from './pages/Itens/EditarItem';
 import PrivateRoute from './components/PrivateRoute';
-import Footer from './components/Footer';
+import { ToastContainer } from 'react-toastify';
 
 function App() {
   const { isAuthenticated } = useAuth();
@@ -21,7 +21,7 @@ function App() {
       <Route path="/" element={<Home />} />
       { !isAuthenticated && (
         <>
-          <Route path="/login" element={<Login />} />
+          <Route path="/login" element={<Login/>} />
           <Route path="/registro" element={<Registro />} />
         </>
       )}
@@ -33,6 +33,7 @@ function App() {
       <Route path="/propostas" element={<PrivateRoute><Propostas /></PrivateRoute>} />
             
     </Routes>
+    <ToastContainer position="bottom-right" autoClose={3000} />
   </BrowserRouter>
   </>
 }
