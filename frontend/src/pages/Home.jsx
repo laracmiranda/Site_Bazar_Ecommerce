@@ -42,7 +42,7 @@ export default function Home() {
     });
 
   return <>
-    <div className="bg-[#f4f4f4] w-full h-full">
+    <div className="bg-[#f8f8f8] w-full h-full">
     <section className="h-80 w-full bg-[#B06D6D] py-1 px-1">
         
         <div className="flex flex-col items-center justify-center py-10 text-white text-center gap-8">
@@ -130,7 +130,7 @@ export default function Home() {
                 {!isAuthenticated ? (
                   <p className="text-xs text-[#4E4E4E]">Entre para ofertar</p>
                 ) : (
-                  <button className="bg-[#B06D6D] text-white px-2 py-1 text-sm rounded">Fazer proposta</button>
+                  <button className="bg-[#B06D6D] text-white p-2 text-xs rounded">Fazer proposta</button>
                 )}
                 
               </div>

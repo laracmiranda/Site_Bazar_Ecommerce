@@ -1,11 +1,11 @@
 import { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import { useNavigate } from 'react-router-dom';
+import UploadImagem from '../../components/UploadImagem';
 
 export default function EditarItem() {
   const { id } = useParams();
-  console.log("ID vindo do useParams:", id);
+  const navigate = useNavigate();
   const [form, setForm] = useState({
     nome: '',
     descricao: '',
@@ -13,37 +13,28 @@ export default function EditarItem() {
     status_item: false,
   });
   const [imagem, setImagem] = useState(null);
-  const [message, setMessage] = useState('');
   const token = localStorage.getItem('token');
-  const navigate = useNavigate();
 
   useEffect(() => {
-    // Buscar dados do item para preencher o formulário
+    if (!id || isNaN(Number(id))) return;
 
-    if (!id || isNaN(Number(id))) {
-    console.warn("ID inválido ou ausente, fetch não será feito.");
-    return;
-    }
+    const fetchItem = async () => {
+      try {
+        const res = await fetch(`http://localhost:3000/itens/${id}`);
+        const data = await res.json();
+        setForm({
+          nome: data.nome,
+          descricao: data.descricao,
+          categoria: data.categoria,
+          status_item: data.status_item,
+        });
+      } catch (err) {
+        console.error('Erro ao buscar item:', err);
+      }
+    };
 
-      const fetchItem = async () => {
-        try {
-          const res = await fetch(`http://localhost:3000/itens/${id}`);
-          const data = await res.json();
-          console.log("Item carregado:", data);
-  
-          setForm({
-            nome: data.nome,
-            descricao: data.descricao,
-            categoria: data.categoria,
-            status_item: data.status_item,
-          });
-        } catch (err) {
-        console.error("Erro ao buscar item:", err);
-        }
-      };
-
-      fetchItem();
-    }, [id]);
+    fetchItem();
+  }, [id]);
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -62,7 +53,7 @@ export default function EditarItem() {
     formData.append('descricao', form.descricao);
     formData.append('categoria', form.categoria);
     formData.append('status_item', form.status_item);
-    if (imagem) formData.append('imagem', imagem); // Só se imagem nova for enviada
+    if (imagem) formData.append('imagem', imagem);
 
     try {
       const res = await fetch(`http://localhost:3000/itens/${id}`, {
@@ -71,56 +62,44 @@ export default function EditarItem() {
         credentials: 'include',
       });
 
-      if (!res.ok) {
-      throw new Error(`Erro ao buscar item: ${res.status}`);
-    }
+      if (!res.ok) throw new Error();
 
       const data = await res.json();
       toast.success(data.message || 'Item atualizado com sucesso!');
-      setTimeout(() => navigate('/meus-itens'), 1000); // redireciona após 1s
+      setTimeout(() => navigate('/meus-itens'), 1000);
     } catch (error) {
       toast.error('Erro ao atualizar item');
     }
   };
 
   return (
-    <div className="max-w-lg mx-auto mt-10 p-6 border rounded-lg shadow">
-      <h2 className="text-2xl font-bold mb-4">Editar Item</h2>
+    <div className="max-w-xl mx-auto mt-10 mb-10 p-8 bg-white rounded-xl shadow-lg">
+      <h2 className="text-2xl font-bold text-center text-[#B06D6D] mb-2">Editar Item</h2>
+      <p className="text-center text-sm text-[#4E4E4E] mb-7">Atualize as informações do seu item</p>
+
       <form onSubmit={handleSubmit} className="space-y-4">
-        {/* ...mesmo formulário do cadastro... */}
         <div>
-          <label>Nome:</label>
+          <label className="block text-sm font-medium mb-1 text-[#1E1E1E]">Nome do Item</label>
           <input
             type="text"
             name="nome"
             value={form.nome}
             onChange={handleChange}
-            className="w-full border p-2 rounded"
+            className="w-full border border-[#8D8D8D] text-[#8D8D8D] rounded-md p-2 focus:outline-none focus:ring focus:ring-[#c27a7a]"
+            placeholder="Nome do item aqui"
             required
           />
         </div>
 
         <div>
-          <label>Descrição:</label>
-          <textarea
-            name="descricao"
-            value={form.descricao}
-            onChange={handleChange}
-            className="w-full border p-2 rounded"
-            required
-          />
-        </div>
-
-        <div>
-          <label>Categoria:</label>
+          <label className="block text-sm font-medium mb-1 text-[#1E1E1E]">Categoria</label>
           <select
             name="categoria"
             value={form.categoria}
             onChange={handleChange}
-            className="w-full border p-2 rounded"
+            className="w-full border border-[#8D8D8D] text-[#8D8D8D] rounded-md p-2 bg-white focus:outline-none focus:ring focus:ring-[#c27a7a]"
             required
           >
-            <option value="">Selecione uma categoria</option>
             <option value="">Selecione uma categoria</option>
             <option value="Moda">Moda</option>
             <option value="Eletrônicos">Eletrônicos</option>
@@ -132,32 +111,54 @@ export default function EditarItem() {
         </div>
 
         <div>
-          <label>Imagem (opcional):</label>
-          <input
-            type="file"
-            accept="image/*"
-            name="imagem"
-            onChange={handleImageChange}
-            className="w-full"
-          />
-        </div>
-
-        <div className="flex items-center space-x-2">
-          <input
-            type="checkbox"
-            name="status_item"
-            checked={form.status_item}
+          <label className="block text-sm font-medium mb-1 text-[#1E1E1E]">Descrição</label>
+          <textarea
+            name="descricao"
+            value={form.descricao}
             onChange={handleChange}
+            rows="4"
+            placeholder="Atualize a descrição do item..."
+            className="w-full border border-[#8D8D8D] text-[#8D8D8D] rounded-md p-2 focus:outline-none focus:ring focus:ring-[#c27a7a]"
+            required
           />
-          <label>Status do item (Disponível?)</label>
         </div>
 
-        <button type="submit" className="w-full bg-blue-600 text-white p-2 rounded">
+        <div>
+          <UploadImagem handleImageChange={handleImageChange} />
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium mb-2">Publicar item?</label>
+          <div
+            onClick={() =>
+              setForm({
+                ...form,
+                status_item: form.status_item === 'true' || form.status_item === true ? 'false' : 'true',
+              })
+            }
+            className={`w-20 h-8 flex items-center justify-between px-1 rounded-full cursor-pointer transition-colors duration-300 ${
+              form.status_item === 'true' || form.status_item === true ? 'bg-[#DCFCE7]' : 'bg-gray-300'
+            }`}
+          >
+            <div
+              className={`w-1/2 h-6 rounded-full text-xs font-semibold text-center leading-6 transition-all duration-300 ${
+                form.status_item === 'true' || form.status_item === true
+                  ? 'bg-white text-[#374151] translate-x-full'
+                  : 'bg-white text-gray-600'
+              }`}
+            >
+              {form.status_item === 'true' || form.status_item === true ? 'Sim' : 'Não'}
+            </div>
+          </div>
+        </div>
+
+        <button
+          type="submit"
+          className="w-full bg-[#B06D6D] hover:bg-[#c27a7a] text-white font-semibold py-2 rounded-md transition"
+        >
           Salvar Alterações
         </button>
       </form>
-
-      {message && <p className="mt-4 text-center">{message}</p>}
     </div>
   );
 }
