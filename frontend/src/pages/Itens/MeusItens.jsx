@@ -60,7 +60,7 @@ export default function MeusItens() {
   }
 
   return (
-    <div >
+    <div className='min-h-screen'>
       <div className='flex flex-row justify-between items-center py-10 px-40 md:px-30'>
       <div className='flex flex-col'>
         <h1 className="text-2xl font-semibold text-[#B06d6d]">Meus Itens</h1>
@@ -80,38 +80,38 @@ export default function MeusItens() {
           </Link>
        </div>
       ) : (
-        <ul className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 px-10 pb-10 md:px-30 ">
+        <ul className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 px-10 pb-10 md:px-30">
           {itens.map((item) => (
             <li key={item.id_item} className="bg-white rounded-lg shadow-lg">
               <div>
                 <img src={item.imagem} alt={item.nome} className="bg-gray-200 w-full rounded-t-lg object-cover mb-3 h-[283px]" />
               </div>
-            <div className='p-4'>
-              <div className='flex flex-row justify-between items-center'>
-                <h2 className="text-lg font-semibold">{item.nome}</h2>
-                <p className="bg-[#F3F4F6] text-xs text-gray-500 mt-1 px-2 py-1 rounded-2xl items-center justify-center">{item.categoria}</p>
-              </div>
-              <p className="text-sm text-gray-600">{item.descricao}</p>
-          
-              <p className="text-xs text-gray-500">{item.status_item ? 'Disponível' : 'Indisponível'}</p>
+              <div className="p-4">
+                  <div className="flex-1">
+                  <div className="flex justify-between items-center mb-1">
+                    <h4 className="font-semibold text-[#B06D6D] text-sm">{item.nome}</h4>
+                    <span className="text-xs text-[#4E4E4E] bg-gray-100 px-2 py-0.5 rounded">{item.categoria || "Categoria"}</span>
+                  </div>
+                  <p className="text-sm text-[#1E1E1E] mb-3">{item.descricao}</p>
+                </div>
 
-            <div className="flex flex-row gap-2 mt-3 justify-between items-center">
-              <Link to={`/editar-item/${item.id_item}`} className="w-full flex justify-center items-center gap-1 bg-[#F3F4F6] text-[#374151] text-sm py-1 px-2 rounded-sm hover:bg-[#e4e9f3]">
-                <SquarePen size={14} /> Editar
-              </Link>
-              <button 
-              onClick={() => {
-                setItemASerExcluido(item.id_item);
-                setModalVisivel(true);
-              }} 
-              className="w-full flex justify-center items-center gap-1 bg-[#FEE2E2] text-[#B91C1C] text-sm py-1 px-2 rounded-sm hover:bg-[#f1cdcd] cursor-pointer">
-              <Trash size={14} /> Excluir
-              </button>
+              <div className="flex flex-row gap-2 mt-3 justify-between items-center">
+                <Link to={`/editar-item/${item.id_item}`} className="w-full flex justify-center items-center gap-1 bg-[#F3F4F6] text-[#374151] text-sm py-1 px-2 rounded-sm hover:bg-[#e4e9f3]">
+                  <SquarePen size={14} /> Editar
+                </Link>
+                <button 
+                onClick={() => {
+                  setItemASerExcluido(item.id_item);
+                  setModalVisivel(true);
+                }} 
+                className="w-full flex justify-center items-center gap-1 bg-[#FEE2E2] text-[#B91C1C] text-sm py-1 px-2 rounded-sm hover:bg-[#f1cdcd] cursor-pointer">
+                <Trash size={14} /> Excluir
+                </button>
+              </div>
             </div>
-          </div>
-        </li>
-      ))}
-    </ul>
+          </li>
+        ))}
+      </ul>
 )}
 
   <ModalConfirmacao

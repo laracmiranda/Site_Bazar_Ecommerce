@@ -1,21 +1,24 @@
 import React, { useState } from 'react';
-import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
+import { Image } from 'lucide-react';
+import UploadImagem from '../../components/UploadImagem';
 
 export default function CadastroItem() {
   const [form, setForm] = useState({
     nome: '',
     descricao: '',
     categoria: '',
-    status_item: false,
+    status_item: '',
   });
   const [imagem, setImagem] = useState(null);
   const token = localStorage.getItem('token');
   const navigate = useNavigate();
 
+  
   const handleChange = (e) => {
-    const { name, value, type, checked } = e.target;
-    setForm({ ...form, [name]: type === 'checkbox' ? checked : value });
+    const { name, value } = e.target;
+    setForm({ ...form, [name]: value });
   };
 
   const handleImageChange = (e) => {
@@ -46,52 +49,43 @@ export default function CadastroItem() {
 
       if (res.ok) {
         toast.success('Item cadastrado com sucesso!');
-        setForm({ nome: '', descricao: '', categoria: '', status_item: false });
+        setForm({ nome: '', descricao: '', categoria: '', status_item: '' });
         setImagem(null);
-        setTimeout(() => navigate('/meus-itens'), 1000); // redireciona após 1s
+        setTimeout(() => navigate('/meus-itens'), 1000);
       } else {
         toast.error('Falha ao cadastrar item');
       }
     } catch (error) {
-      console.error('Erro:', error);
       toast.error('Erro ao cadastrar item');
     }
   };
 
   return (
-    <div className="max-w-lg mx-auto mt-10 p-6 border rounded-lg shadow">
-      <h2 className="text-2xl font-bold mb-4">Cadastro de Item</h2>
+    <div className="max-w-xl mx-auto mt-10 mb-10 p-8 bg-white rounded-xl shadow-lg">
+      <h2 className="text-2xl font-bold text-center text-[#B06D6D] mb-2">Cadastre seu Item</h2>
+      <p className="text-center text-sm text-[#4E4E4E] mb-7">Compartilhe algo que você gostaria de trocar com nossa comunidade</p>
+
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
-          <label>Nome:</label>
+          <label className="block text-sm font-medium mb-1 text-[#1E1E1E]">Nome do Item</label>
           <input
             type="text"
             name="nome"
             value={form.nome}
             onChange={handleChange}
-            className="w-full border p-2 rounded"
+            className="w-full border border-[#8D8D8D] text-[#8D8D8D] rounded-md p-2 focus:outline-none focus:ring focus:ring-[#c27a7a]"
+            placeholder="Nome do item aqui"
             required
           />
         </div>
 
         <div>
-          <label>Descrição:</label>
-          <textarea
-            name="descricao"
-            value={form.descricao}
-            onChange={handleChange}
-            className="w-full border p-2 rounded"
-            required
-          />
-        </div>
-
-        <div>
-          <label>Categoria:</label>
+          <label className="block text-sm font-medium mb-1 text-[#1E1E1E]">Categoria</label>
           <select
             name="categoria"
             value={form.categoria}
             onChange={handleChange}
-            className="w-full border p-2 rounded"
+            className="w-full border border-[#8D8D8D] text-[#8D8D8D] rounded-md p-2 bg-white focus:outline-none focus:ring focus:ring-[#c27a7a]"
             required
           >
             <option value="">Selecione uma categoria</option>
@@ -105,28 +99,52 @@ export default function CadastroItem() {
         </div>
 
         <div>
-          <label>Imagem:</label>
-          <input
-            type="file"
-            accept="image/*"
-            name="imagem"
-            onChange={handleImageChange}
-            className="w-full"
+          <label className="block text-sm font-medium mb-1 text-[#1E1E1E]">Descrição</label>
+          <textarea
+            name="descricao"
+            value={form.descricao}
+            onChange={handleChange}
+            rows="4"
+            placeholder="Descreva seu item, condição e pelo quê está disposto à trocá-lo..."
+            className="w-full border border-[#8D8D8D] text-[#8D8D8D] rounded-md p-2 focus:outline-none focus:ring focus:ring-[#c27a7a]"
             required
           />
         </div>
 
-        <div className="flex items-center space-x-2">
-          <input
-            type="checkbox"
-            name="status_item"
-            checked={form.status_item}
-            onChange={handleChange}
-          />
-          <label>Status do item (Disponível?)</label>
+        <div>
+          <UploadImagem handleImageChange={handleImageChange} />
         </div>
 
-        <button type="submit" className="w-full bg-purple-600 text-white p-2 rounded hover:opacity-90">
+        <div>
+          <label className="block text-sm font-medium mb-2">
+            Publicar item?
+          </label>
+          <div
+            onClick={() =>
+              setForm({ ...form, status_item: form.status_item === 'true' ? 'false' : 'true' })
+            }
+            className={`w-20 h-8 flex items-center justify-between px-1 rounded-full cursor-pointer transition-colors duration-300 ${
+              form.status_item === 'true' ? 'bg-[#DCFCE7]' : 'bg-gray-300'
+            }`}
+          >
+            <div
+              className={`w-1/2 h-6 rounded-full text-xs font-semibold text-center leading-6 transition-all duration-300 ${
+                form.status_item === 'true'
+                  ? 'bg-white text-[#374151] translate-x-full'
+                  : 'bg-white text-gray-600'
+              }`}
+            >
+              {form.status_item === 'true' ? 'Sim' : 'Não'}
+            </div>
+          </div>
+        </div>
+
+
+
+        <button
+          type="submit"
+          className="w-full bg-[#B06D6D] hover:bg-[#c27a7a] text-white font-semibold py-2 rounded-md transition"
+        >
           Cadastrar Item
         </button>
       </form>

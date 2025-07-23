@@ -130,7 +130,7 @@ export default function Home() {
                 {!isAuthenticated ? (
                   <p className="text-xs text-[#4E4E4E]">Entre para ofertar</p>
                 ) : (
-                  <button className="bg-[#B06D6D] text-white px-2 py-1 text-sm rounded">Fazer proposta</button>
+                  <button className="bg-[#B06D6D] text-white p-2 text-xs rounded">Fazer proposta</button>
                 )}
                 
               </div>
