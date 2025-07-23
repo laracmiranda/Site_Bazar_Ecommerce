@@ -1,34 +1,41 @@
 // src/context/AuthContext.jsx
-import { createContext, useContext, useEffect, useState } from 'react';
+import { createContext, useState, useEffect } from 'react';
+import api from '../services/api';
 
-const AuthContext = createContext();
+export const AuthContext = createContext();
 
 export function AuthProvider({ children }) {
-
-const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [usuario, setUsuario] = useState(null);
+  const [carregando, setCarregando] = useState(true);
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
-    setIsAuthenticated(!!token); // true se existir token
+    async function carregar() {
+      try {
+        const { data } = await api.post('/auth/sessao');
+        setUsuario(data.usuario);
+      } catch {
+        setUsuario(null);
+      } finally {
+        setCarregando(false);
+      }
+    }
+    carregar();
   }, []);
 
-  const login = (token) => {
-    localStorage.setItem('token', token);
-    setIsAuthenticated(true);
-  };
+  async function login(email, senha) {
+    await api.post('/auth/login', { email, senha });
+    const { data } = await api.post('/auth/me');
+    setUsuario(data.usuario);
+  }
 
-  const logout = () => {
-    localStorage.removeItem('token');
-    setIsAuthenticated(false);
-  };
+  async function logout() {
+    await api.post('/auth/logout');
+    setUsuario(null);
+  }
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, login, logout }}>
+    <AuthContext.Provider value={{ usuario, login, logout, carregando }}>
       {children}
     </AuthContext.Provider>
   );
-}
-
-export function useAuth() {
-  return useContext(AuthContext);
 }
