@@ -61,6 +61,9 @@ export default function MeusItens() {
   try {
     const res = await fetch(`http://localhost:3000/itens/${id}`, {
       method: 'DELETE',
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem('token')}`
+      },
       credentials: 'include', // se precisar de cookie/token
     });
 
