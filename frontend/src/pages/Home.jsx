@@ -42,15 +42,15 @@ export default function Home() {
     });
 
   return <>
-    <div className="bg-[#f8f8f8] w-full h-full">
-    <section className="h-80 w-full bg-[#B06D6D] py-1 px-1">
+    <div>
+    <section className="w-full bg-[#B06D6D] min-h-[20rem] flex items-center justify-center px-4 py-12">
         
-        <div className="flex flex-col items-center justify-center py-10 text-white text-center gap-8">
-            <h1 className="text-5xl font-bold">Negocie. Troque. Descubra.</h1>
-            <p className="">Junte-se ao nosso mercado impulsionado pela comunidade, <br />onde cada item tem o potencial de uma nova história</p>
+        <div className="flex flex-col items-center justify-center text-white text-center gap-6 max-w-4xl">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold leading-tight">Negocie. Troque. Descubra.</h1>
+            <p className="text-sm sm:text-base md:text-lg leading-relaxed px-2 sm:px-10">Junte-se ao nosso mercado impulsionado pela comunidade, <br />onde cada item tem o potencial de uma nova história</p>
             
             {!isAuthenticated ? (
-            <button onClick={handleCadastroClick} className="font-semibold rounded-md border border-white w-50 h-12 hover:bg-white hover:text-[#B06D6D] cursor-pointer">
+            <button onClick={handleCadastroClick} className="font-semibold rounded-md border border-white px-6 py-3 text-sm sm:text-base hover:bg-white hover:text-[#B06D6D] transition-colors cursor-pointer">
               Cadastre-se
             </button>
             ) : (
