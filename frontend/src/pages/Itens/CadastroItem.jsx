@@ -43,8 +43,11 @@ export default function CadastroItem() {
     try {
       const res = await fetch('http://localhost:3000/itens', {
         method: 'POST',
-        body: formData,
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`,
+        },
         credentials: 'include',
+        body: formData
       });
 
       if (res.ok) {

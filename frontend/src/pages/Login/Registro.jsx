@@ -1,33 +1,53 @@
 import React, { useState } from 'react';
 import { User, Mail, MapPin, Lock, EyeOff, Eye } from 'lucide-react';
+import { toast } from 'react-toastify';
+import { useNavigate } from 'react-router-dom';
 
 export default function Registro() {
-  const [form, setForm] = useState({ nome: '', email: '', endereco: '', senha: '', confirmarSenha: '' });
+  const [form, setForm] = useState({ nome: '', cpf: '', email: '', endereco: '', senha: ''});
   const [message, setMessage] = useState('');
-  const [senha, setSenha] = useState('');
   const [mostrarSenha, setMostrarSenha] = useState(false);
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
+  setForm({ ...form, [e.target.name]: e.target.value });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    try {
-      const res = await fetch('http://localhost:3000/usuarios', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(form),
-      });
+  const { ...dadosParaEnvio } = form;
 
-      const data = await res.json();
-      setMessage(data.message);
-      setForm({ nome: '', email: '', endereco: '', senha: '', confirmarSenha: '' });
-    } catch (err) {
-      setMessage('Erro ao cadastrar usuário');
-    }
-  };
+  try {
+  const res = await fetch('http://localhost:3000/usuarios', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(dadosParaEnvio),
+  });
+
+  const text = await res.text();
+  let data;
+  try {
+    data = JSON.parse(text);
+  } catch (err) {
+    toast.error('Erro inesperado do servidor');
+    return;
+  }
+
+
+  if (res.ok) {
+    toast.success("Usuário cadastrado com sucesso!");
+    setTimeout(() => navigate('/login'), 1000);
+  } else {
+    toast.error(data.mensagem || 'Erro ao cadastrar usuário');
+  }
+
+  setForm({ nome: '', cpf: '', email: '', endereco: '', senha: ''});
+} catch (err) {
+  toast.error('Erro ao cadastrar usuário');
+}
+};
+
 
   return (
     <div className="min-h-screen flex items-center justify-center px-4">
@@ -45,6 +65,23 @@ export default function Registro() {
                 type="text"
                 name="nome"
                 value={form.nome}
+                onChange={handleChange}
+                placeholder="Insira seu nome completo"
+                className="w-full outline-none text-sm text-[#8D8D8D]"
+                required
+              />
+            </div>
+          </div>
+
+          {/* CPF */}
+          <div>
+            <label className="block text-sm font-medium mb-1 text-[#1E1E1E]">CPF</label>
+            <div className="flex items-center border rounded px-3 py-2 border-[#8D8D8D]">
+              <User size={16} className="text-[#8D8D8D] mr-2" />
+              <input
+                type="number"
+                name="cpf"
+                value={form.cpf}
                 onChange={handleChange}
                 placeholder="Insira seu nome completo"
                 className="w-full outline-none text-sm text-[#8D8D8D]"
@@ -95,8 +132,8 @@ export default function Registro() {
               <input
                 type={mostrarSenha ? 'text' : 'password'}
                 name="senha"
-                value={senha}
-                onChange={(e) => setSenha(e.target.value)}
+                value={form.senha}
+                onChange={handleChange}
                 placeholder="Insira sua senha"
                 className=" w-full outline-none text-sm text-[#8D8D8D] pl-10 pr-10 py-2 border border-[#8D8D8D] rounded-md"
                 required
@@ -112,16 +149,13 @@ export default function Registro() {
           </div>
 
           <button
-            type="submit"
+            type="button"
+            onClick={handleSubmit}
             className="w-full bg-[#B06D6D] hover:bg-[#c27a7a] text-white py-2 rounded transition mt-4"
           >
             Criar Conta
           </button>
         </form>
-
-        {message && (
-          <p className="mt-4 text-sm text-center text-green-600">{message}</p>
-        )}
 
         <p className="mt-6 text-center text-sm">
           Já possui uma conta?{' '}

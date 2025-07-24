@@ -1,31 +1,54 @@
-import { buscarUsuarioPorCpf } from "../services/usuarios.service.js";
+import { buscarUsuarioPorEmail } from "../services/usuarios.service.js";
 import jwt from 'jsonwebtoken'
+import bcrypt from 'bcrypt';
 
 const SECRET = process.env.JWT_SECRET || 'autentificacao-de-alta-seguranca';
 
 export const login = async (req, res) => {
+    const { email, senha } = req.body;
+
     try {
-        const {cpf, senha} = req.body;
-        const usuario = await buscarUsuarioPorCpf(cpf);
-        
-        if (!usuario || usuario.senha !== senha) {
-            return res.status(401).json({ erro: 'CPF ou senha invalidos'});
+        const usuario = await buscarUsuarioPorEmail(email);
+
+        if (!usuario) {
+            return res.status(404).json({ mensagem: "Usuário não encontrado" });
         }
 
-        const token = jwt.sign ({ cpf: usuario.cpf}, SECRET, { expiresIn: '1h'});
+        const senhaValida = await bcrypt.compare(senha, usuario.senha);
+
+        console.log("Senha válida?", senhaValida);
+
+        if (!senhaValida) {
+            return res.status(401).json({ mensagem: "Senha incorreta" });
+        }
+
+        // Gera o token com os dados do usuário
+        const token = jwt.sign(
+        { cpf: usuario.cpf, email: usuario.email },
+        SECRET,
+        { expiresIn: '1h' }
+        );
+
         res.cookie('token', token, {
-            httpOnly: true,
-            secure: process.env.NODE_ENV === 'prduction',
-            sameSite: 'strict',
-            maxAge: 60 * 60 * 1000, //uma hora
+        httpOnly: true,
+        secure: false, // true se estiver usando HTTPS
+        sameSite: 'Lax'
         });
 
-        res.status(200).json({mensagem: 'Login efetuado com sucesso!' });
-    } catch (erro) {
-        return res.status(401).json({message: erro.message});
-        //res.status(500).json({ erro: 'Erro ao efetuar login!', mensagem: erro.mensagem});
+        return res.status(200).json({ 
+            mensagem: "Login bem-sucedido",
+            cpf: usuario.cpf,
+            email: usuario.email,
+            nome: usuario.nome,
+        
+        });
+
+    } catch (error) {
+        console.error("Erro ao fazer login:", error);
+        return res.status(500).json({ mensagem: "Erro interno no servidor" });
     }
 };
+
 
 export const logout = (req, res) => {
     res.clearCookie('token');
