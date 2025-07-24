@@ -63,7 +63,7 @@ export default function Login() {
                 value={senha}
                 onChange={(e) => setSenha(e.target.value)}
                 placeholder="Insira sua senha"
-                className="w-full outline-none text-sm text-[#8D8D8D] w-full pl-10 pr-10 py-2 border border-[#8D8D8D] rounded-md"
+                className="w-full outline-none text-sm text-[#8D8D8D] pl-10 pr-10 py-2 border border-[#8D8D8D] rounded-md"
                 required
               />
               <button

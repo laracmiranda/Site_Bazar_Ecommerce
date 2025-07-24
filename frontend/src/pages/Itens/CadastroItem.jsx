@@ -61,7 +61,8 @@ export default function CadastroItem() {
   };
 
   return (
-    <div className="max-w-xl mx-auto mt-10 mb-10 p-8 bg-white rounded-xl shadow-lg">
+    <div className="min-h-screen px-4 sm:px-6 lg:px-8 flex items-center justify-center">
+    <div className="w-full max-w-2xl my-10 p-8 bg-white rounded-xl shadow-lg">
       <h2 className="text-2xl font-bold text-center text-[#B06D6D] mb-2">Cadastre seu Item</h2>
       <p className="text-center text-sm text-[#4E4E4E] mb-7">Compartilhe algo que você gostaria de trocar com nossa comunidade</p>
 
@@ -148,6 +149,7 @@ export default function CadastroItem() {
           Cadastrar Item
         </button>
       </form>
+    </div>
     </div>
   );
 }
