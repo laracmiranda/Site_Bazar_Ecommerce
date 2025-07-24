@@ -19,7 +19,7 @@ export default function Home() {
     useEffect(() => {
     const fetchItens = async () => {
       try {
-        const response = await fetch('http://localhost:3000/itens/meus-itens', {
+        const response = await fetch('http://localhost:3000/itens/ativos', {
           credentials: 'include',
         });
 
