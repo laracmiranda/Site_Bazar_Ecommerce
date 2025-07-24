@@ -1,10 +1,8 @@
 import { useAuth } from "../context/AuthContext";
-import { Search, Smile, Tag, ListFilter} from 'lucide-react';
+import { Search, Smile, Tag, ListFilter, CircleChevronLeft, CircleChevronRight} from 'lucide-react';
 import { useEffect, useState } from "react";
 import { Navigate, useNavigate } from "react-router-dom";
 import Footer from "../components/Footer";
-import Loader from "../components/Loader";
-
 
 export default function Home() {
     const { isAuthenticated } = useAuth();
@@ -59,14 +57,28 @@ export default function Home() {
 
     const [search, setSearch] = useState("");
     const [filter, setFilter] = useState("Todas as categorias");
-    const filteredItens = itens.filter((itens) => {
-      const matchesSearch = [itens.nome, itens.descricao].some(field =>
-        field?.toLowerCase().includes(search.toLowerCase())
-      );
-      const matchesFilter = filter === "" || filter === "Todas as categorias" || itens.categoria?.toLowerCase() === filter.toLowerCase();
+    const [paginaAtual, setPaginaAtual] = useState(1);
+    const itensPorPagina = 12;
+
+    //Filtro
+    const filteredItens = itens.filter((item) => {
+    const matchesSearch = [item.nome, item.descricao].some((field) =>
+      field?.toLowerCase().includes(search.toLowerCase())
+    );
+    const matchesFilter =
+      filter === "" ||
+      filter === "Todas as categorias" ||
+      item.categoria?.toLowerCase() === filter.toLowerCase();
 
     return matchesSearch && matchesFilter;
-    });
+  });
+
+    const totalPaginas = Math.ceil(filteredItens.length / itensPorPagina);
+
+    const itensPaginados = filteredItens.slice(
+      (paginaAtual - 1) * itensPorPagina,
+      paginaAtual * itensPorPagina
+    );
 
     const SkeletonCard = () => (
     <div className="bg-white rounded-lg shadow-lg animate-pulse">
@@ -149,7 +161,7 @@ export default function Home() {
           <SkeletonCard key={index} />
           ))
         ) : (
-          filteredItens.map((item) => (
+          itensPaginados.map((item) => (
               <div key={item.id_item} className="bg-white rounded-lg shadow-lg flex flex-col">
                 <div>
                   <img
@@ -185,6 +197,30 @@ export default function Home() {
             ))
           )}
           </div>
+          {/* Paginação */}
+          {!carregando && totalPaginas > 1 && (
+            <div className="flex justify-center items-center mt-10 gap-4">
+              <button
+                onClick={() => setPaginaAtual((prev) => Math.max(prev - 1, 1))}
+                disabled={paginaAtual === 1}
+                className="px-4 py-2 disabled:opacity-50 cursor-pointer"
+              >
+                <CircleChevronLeft className="text-[#4E4E4E] "/>
+              </button>
+
+              <span className="text-xs text-[#4E4E4E]">
+               Página {paginaAtual} de {totalPaginas}
+              </span>
+
+              <button
+                onClick={() => setPaginaAtual((prev) => Math.min(prev + 1, totalPaginas))}
+                disabled={paginaAtual === totalPaginas}
+                className="px-4 py-2 disabled:opacity-50 cursor-pointer"
+              >
+                <CircleChevronRight className="text-[#4E4E4E] " />
+              </button>
+            </div>
+          )}
     </section>
 
     </div>

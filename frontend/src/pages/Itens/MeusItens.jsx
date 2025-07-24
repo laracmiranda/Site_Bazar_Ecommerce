@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Plus, Package, Archive, Trash, SquarePen, CircleAlert } from 'lucide-react';
+import { Plus, Package, Archive, Trash, SquarePen, CircleAlert, CircleChevronLeft, CircleChevronRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import ModalConfirmacao from '../../components/ModalConfirmacao';
@@ -82,6 +82,17 @@ export default function MeusItens() {
     }
   }
 
+    const [paginaAtual, setPaginaAtual] = useState(1);
+    const itensPorPagina = 8;
+
+    const totalPaginas = Math.ceil(itens.length / itensPorPagina);
+
+    const itensPaginados = itens.slice(
+      (paginaAtual - 1) * itensPorPagina,
+      paginaAtual * itensPorPagina
+    );
+
+
   const SkeletonCard = () => (
   <div className="bg-white rounded-lg shadow-lg animate-pulse">
     <div className="bg-gray-300 w-full h-[283px] rounded-t-lg"></div>
@@ -125,7 +136,7 @@ export default function MeusItens() {
         </div>
       ) : (
         <ul className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 px-10 pb-10 md:px-30">
-          {itens.map((item) => (
+          {itensPaginados.map((item) => (
             <li key={item.id_item} className="bg-white rounded-lg shadow-lg">
               <div>
                 <img src={item.imagem} alt={item.nome} className="bg-gray-200 w-full rounded-t-lg object-cover mb-3 h-[283px]" />
@@ -156,6 +167,30 @@ export default function MeusItens() {
             </li>
           ))}
         </ul>
+      )}
+      {/* Paginação */}
+      {!carregando && totalPaginas > 1 && (
+        <div className="flex justify-center items-center mt-5 mb-10 gap-4">
+          <button
+            onClick={() => setPaginaAtual((prev) => Math.max(prev - 1, 1))}
+            disabled={paginaAtual === 1}
+            className="px-4 py-2 disabled:opacity-50 cursor-pointer"
+          >
+            <CircleChevronLeft className="text-[#4E4E4E] "/>
+          </button>
+
+          <span className="text-xs text-[#4E4E4E]">
+            Página {paginaAtual} de {totalPaginas}
+          </span>
+
+          <button
+            onClick={() => setPaginaAtual((prev) => Math.min(prev + 1, totalPaginas))}
+            disabled={paginaAtual === totalPaginas}
+            className="px-4 py-2 disabled:opacity-50 cursor-pointer"
+          >
+            <CircleChevronRight className="text-[#4E4E4E] " />
+          </button>
+        </div>
       )}
 
   <ModalConfirmacao
