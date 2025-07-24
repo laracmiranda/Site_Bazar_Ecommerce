@@ -3,6 +3,7 @@ import { Search, Smile, Tag, ListFilter} from 'lucide-react';
 import { useEffect, useState } from "react";
 import { Navigate, useNavigate } from "react-router-dom";
 import Footer from "../components/Footer";
+import Loader from "../components/Loader";
 
 
 export default function Home() {
@@ -12,6 +13,32 @@ export default function Home() {
     const handleCadastroClick = () => {
       navigate("/registro");
     };
+
+    const [carregando, setCarregando] = useState(true);
+
+    useEffect(() => {
+    const fetchItens = async () => {
+      try {
+        const response = await fetch('http://localhost:3000/itens/meus-itens', {
+          credentials: 'include',
+        });
+
+        if (!response.ok) {
+          throw new Error('Erro ao buscar os itens');
+        }
+
+        const dados = await response.json();
+        setItens(dados);
+      } catch (err) {
+        setErro(err.message);
+      } finally {
+        setCarregando(false); // Finaliza o carregamento
+      }
+    };
+
+    fetchItens();
+    }, []);
+    
 
     const [itens, setItens] = useState([]);
     const [quantidadeAtivos, setQuantidadeAtivos] = useState(0);
@@ -40,6 +67,21 @@ export default function Home() {
 
     return matchesSearch && matchesFilter;
     });
+
+    const SkeletonCard = () => (
+    <div className="bg-white rounded-lg shadow-lg animate-pulse">
+      <div className="bg-gray-300 w-full h-[283px] rounded-t-lg"></div>
+      <div className="p-4 space-y-2">
+        <div className="h-4 bg-gray-300 rounded w-3/4"></div>
+        <div className="h-3 bg-gray-200 rounded w-full"></div>
+        <div className="h-3 bg-gray-200 rounded w-5/6"></div>
+        <div className="flex gap-2 mt-4">
+          <div className="h-8 w-full bg-gray-300 rounded-sm"></div>
+          <div className="h-8 w-full bg-gray-300 rounded-sm"></div>
+        </div>
+      </div>
+    </div>
+    );
 
   return <>
     <div>
@@ -99,47 +141,53 @@ export default function Home() {
     </section>
 
     {/* Lista de Itens */}
-      <section className="px-4 md:px-30 py-6 flex-1">
-        <h3 className="text-xl font-semibold mb-4 text-[#B06D6D]">Itens disponíveis</h3>
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-           {filteredItens.map((item) => (
-            <div key={item.id_item} className="bg-white rounded-lg shadow-lg flex flex-col">
-              <div>
-                <img
-                src={item.imagem || "https://via.placeholder.com/150"}
-                alt={item.nome}
-                className="bg-gray-200 w-full rounded-t-lg object-cover mb-3 h-[283px]"
-                />
-              </div>
-              <div className="p-4">
-                <div className="flex-1">
-                <div className="flex justify-between items-center mb-1">
-                  <h4 className="font-semibold text-[#B06D6D] text-sm">{item.nome}</h4>
-                  <div className="flex flex-row gap-1 bg-gray-100 px-2 py-0.5 rounded items-center">
-                  <Tag className="w-2.5 h-2.5 stroke-[#4E4E4E]"/> 
-                  <span className="text-xs text-[#4E4E4E]">{item.categoria || "Categoria"}</span>
+    <section className="px-4 md:px-30 py-6 flex-1">
+      <h3 className="text-xl font-semibold mb-4 text-[#B06D6D]">Itens disponíveis</h3>
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+        {carregando ? (
+          [...Array(8)].map((_, index) => (
+          <SkeletonCard key={index} />
+          ))
+        ) : (
+          filteredItens.map((item) => (
+              <div key={item.id_item} className="bg-white rounded-lg shadow-lg flex flex-col">
+                <div>
+                  <img
+                    src={item.imagem || "https://via.placeholder.com/150"}
+                    alt={item.nome}
+                    className="bg-gray-200 w-full rounded-t-lg object-cover mb-3 h-[283px]"
+                  />
+                </div>
+                <div className="p-4 flex flex-col flex-1">
+                  <div className="flex-1">
+                    <div className="flex justify-between items-center mb-1">
+                      <h4 className="font-semibold text-[#B06D6D] text-sm">{item.nome}</h4>
+                      <div className="flex flex-row gap-1 bg-gray-100 px-2 py-0.5 rounded items-center">
+                        <Tag className="w-2.5 h-2.5 stroke-[#4E4E4E]" />
+                        <span className="text-xs text-[#4E4E4E]">{item.categoria || "Categoria"}</span>
+                      </div>
+                    </div>
+                    <p className="text-sm text-[#1E1E1E] mb-3">{item.descricao}</p>
+                  </div>
+                  <div className="flex items-center justify-between mt-auto">
+                    <div className="flex flex-row gap-1 items-center">
+                      <Smile className="w-4 h-4 stroke-[#4E4E4E]" />
+                      <span className="text-xs text-[#4E4E4E]">{item.donoItem?.nome || "Anônimo"}</span>
+                    </div>
+                    {!isAuthenticated ? (
+                      <p className="text-xs text-[#4E4E4E]">Entre para ofertar</p>
+                    ) : (
+                      <button className="bg-[#B06D6D] text-white p-2 text-xs rounded">Fazer proposta</button>
+                    )}
                   </div>
                 </div>
-                <p className="text-sm text-[#1E1E1E] mb-3">{item.descricao}</p>
               </div>
-              <div className="flex items-center justify-between mt-auto">
-                <div className="flex flex-row gap-1 items-center">
-                  <Smile className="w-4 h-4 stroke-[#4E4E4E]"/>
-                  <span className="text-xs text-[#4E4E4E]">{item.donoItem?.nome || "Anônimo"}</span>
-                </div>
-                {!isAuthenticated ? (
-                  <p className="text-xs text-[#4E4E4E]">Entre para ofertar</p>
-                ) : (
-                  <button className="bg-[#B06D6D] text-white p-2 text-xs rounded">Fazer proposta</button>
-                )}
-                
-              </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
-      </div>
-      <Footer/>
+            ))
+          )}
+          </div>
+    </section>
+
+    </div>
+    <Footer/>
   </>;
 }

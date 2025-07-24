@@ -7,7 +7,30 @@ import ModalConfirmacao from '../../components/ModalConfirmacao';
 export default function MeusItens() {
   const [itens, setItens] = useState([]);
   const [erro, setErro] = useState(null);
+  const [carregando, setCarregando] = useState(true);
 
+  useEffect(() => {
+  const fetchItens = async () => {
+    try {
+      const response = await fetch('http://localhost:3000/itens/meus-itens', {
+        credentials: 'include',
+      });
+
+      if (!response.ok) {
+        throw new Error('Erro ao buscar os itens');
+      }
+
+      const dados = await response.json();
+      setItens(dados);
+    } catch (err) {
+      setErro(err.message);
+    } finally {
+      setCarregando(false); // Finaliza o carregamento
+    }
+  };
+
+  fetchItens();
+  }, []);
 
   useEffect(() => {
 
@@ -59,6 +82,21 @@ export default function MeusItens() {
     }
   }
 
+  const SkeletonCard = () => (
+  <div className="bg-white rounded-lg shadow-lg animate-pulse">
+    <div className="bg-gray-300 w-full h-[283px] rounded-t-lg"></div>
+    <div className="p-4 space-y-2">
+      <div className="h-4 bg-gray-300 rounded w-3/4"></div>
+      <div className="h-3 bg-gray-200 rounded w-full"></div>
+      <div className="h-3 bg-gray-200 rounded w-5/6"></div>
+      <div className="flex gap-2 mt-4">
+        <div className="h-8 w-full bg-gray-300 rounded-sm"></div>
+        <div className="h-8 w-full bg-gray-300 rounded-sm"></div>
+      </div>
+    </div>
+  </div>
+  );
+
   return (
     <div className='min-h-screen'>
       <div className='flex flex-row justify-between items-center py-10 px-40 md:px-30'>
@@ -70,7 +108,13 @@ export default function MeusItens() {
             <Plus size={15}/> Novo Item
       </Link>
     </div>
-        {itens.length === 0 ? (
+    {carregando ? (
+      <ul className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 px-10 pb-10 md:px-30">
+        {[...Array(4)].map((_, index) => (
+        <SkeletonCard key={index} />
+      ))}
+      </ul>
+      ) : itens.length === 0 ? (
         <div className="flex flex-col items-center justify-center px-10 pb-10 mt-10 gap-1 text-center text-gray-500">
           <Package size={64} className="mb-4 stroke-[#8D8D8D]" />
           <p className="text-lg font-medium text-[#1E1E1E]">Nenhum item cadastrado ainda</p>
@@ -78,7 +122,7 @@ export default function MeusItens() {
           <Link to="/cadastro-item" className="inline-flex items-center gap-2 px-4 py-2 bg-[#B06D6D] text-white text-sm rounded-lg hover:bg-[#c27a7a] transition-all">
             <Plus size={16} /> Cadastre seu Primeiro Item
           </Link>
-       </div>
+        </div>
       ) : (
         <ul className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 px-10 pb-10 md:px-30">
           {itens.map((item) => (
@@ -109,10 +153,10 @@ export default function MeusItens() {
                 </button>
               </div>
             </div>
-          </li>
-        ))}
-      </ul>
-)}
+            </li>
+          ))}
+        </ul>
+      )}
 
   <ModalConfirmacao
   visivel={modalVisivel}
