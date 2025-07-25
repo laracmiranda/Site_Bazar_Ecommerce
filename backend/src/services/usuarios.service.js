@@ -1,4 +1,6 @@
 import usuariosRepository from '../repositories/usuarios.repository.js';
+import bcrypt from 'bcrypt';
+
 
 export const listarUsuarios = async () => {
     return await usuariosRepository.findAll();
@@ -9,8 +11,19 @@ export const buscarUsuarioPorCpf = async (cpf) => {
 };
 
 export const criarUsuario = async (dados) => {
-    return await usuariosRepository.create(dados);
+    const { senha } = dados;
+    if (!senha) throw new Error("Senha não fornecida");
+
+    const senhaCriptografada = await bcrypt.hash(senha, 10);
+
+    const usuarioComSenhaSegura = {
+        ...dados,
+        senha: senhaCriptografada
+    };
+
+    return await usuariosRepository.create(usuarioComSenhaSegura);
 };
+
 
 export const buscarUsuarioPorEmail = async (email) => {
     return await usuariosRepository.findUserByEmail(email);

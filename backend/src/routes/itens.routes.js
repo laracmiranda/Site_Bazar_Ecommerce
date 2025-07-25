@@ -1,14 +1,15 @@
 import express from 'express';
 import {
   getItens,
-  getItemPorId,
   postItem,
   putItem,
   deleteItem,
   getItensAtivos,
   getItensPorDono,
   getItensPorCategoria,
-  getItensPorPalavraChave
+  getItemPorId,
+  getItensPorPalavraChave,
+  countItensAtivos
 } from '../controllers/itens.controller.js';
 import { autenticar } from '../middlewares/auth.js';
 
@@ -19,15 +20,17 @@ const upload = multer({ storage: multer.memoryStorage()});
 
 // Rotas específicas
 router.get('/ativos', getItensAtivos);
-router.get('/dono/:cpf', getItensPorDono);
+router.get('/ativos/quantidade', countItensAtivos);  
+router.get('/meus-itens', autenticar, getItensPorDono);
+router.get('/:id', getItemPorId);
 router.get('/categoria/:categoria', getItensPorCategoria);         
-router.get('/buscar/:termo', getItensPorPalavraChave);           
+router.get('/buscar/:termo', getItensPorPalavraChave);   
+      
 
 // Rotas padrão
 router.get('/', getItens);
-router.get('/:id', getItemPorId);
 router.post('/', autenticar, upload.single('imagem'), postItem);
-router.put('/:id', putItem);
+router.put('/:id', autenticar, upload.single('imagem'), putItem);
 router.delete('/:id', deleteItem);
 
 export default router;

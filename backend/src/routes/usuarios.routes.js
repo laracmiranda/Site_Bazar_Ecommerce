@@ -34,7 +34,7 @@ router.get('/:cpf/propostas/feitas', getPropostasFeitas);
 router.get('/:cpf/propostas/recebidas', getPropostasRecebidas);
 
 // Criar novo usuário
-router.post('/', validaCPF, postUsuario);
+router.post('/', postUsuario);
 
 // Atualizar usuário
 router.put('/:cpf', putUsuario);
