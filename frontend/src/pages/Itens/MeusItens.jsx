@@ -8,6 +8,19 @@ export default function MeusItens() {
   const [itens, setItens] = useState([]);
   const [erro, setErro] = useState(null);
   const [carregando, setCarregando] = useState(true);
+  
+  async function tratarResposta(response) {
+  if (response.status === 401) {
+    alert('Sua sessão expirou');
+    window.location.href = '/'; // redireciona para home
+    return null; // ou throw para interromper
+  }
+  if (!response.ok) {
+    const errorMsg = await response.text();
+    throw new Error(errorMsg || 'Erro desconhecido');
+  }
+  return response.json();
+  }
 
   useEffect(() => {
   const fetchItens = async () => {
@@ -20,8 +33,10 @@ export default function MeusItens() {
         throw new Error('Erro ao buscar os itens');
       }
 
-      const dados = await response.json();
-      setItens(dados);
+      const dados = await tratarResposta(response);
+      if (dados) {
+        setItens(dados);
+      }
     } catch (err) {
       setErro(err.message);
     } finally {
@@ -49,7 +64,8 @@ export default function MeusItens() {
       throw new Error('Erro ao deletar o item');
     }
 
-    const data = await res.json();
+    const data = await tratarResposta(res);
+    if (!data) return;
     toast.success(data.message || 'ITem excluído com sucesso');
 
     // Atualiza a lista local, removendo o item deletado
