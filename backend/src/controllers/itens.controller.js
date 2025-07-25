@@ -28,7 +28,7 @@ export const postItem = async (req, res) => {
   try {
     const dadosItem = {
       ...req.body,
-      status_item: req.body.status_item === 'true',
+      status_item: req.body.status_item === 'disponivel',
       cpf_dono: req.usuario.cpf, // Puxa o CPF do usuário autenticado
     };
     console.log('req.file:', req.file);

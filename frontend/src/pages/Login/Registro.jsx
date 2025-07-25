@@ -25,6 +25,8 @@ export default function Registro() {
     body: JSON.stringify(dadosParaEnvio),
   });
 
+  console.log("Dados recebidos:", dadosParaEnvio);
+
   const text = await res.text();
   let data;
   try {
@@ -33,7 +35,6 @@ export default function Registro() {
     toast.error('Erro inesperado do servidor');
     return;
   }
-
 
   if (res.ok) {
     toast.success("Usuário cadastrado com sucesso!");
@@ -83,7 +84,7 @@ export default function Registro() {
                 name="cpf"
                 value={form.cpf}
                 onChange={handleChange}
-                placeholder="Insira seu nome completo"
+                placeholder="Insira seu CPF completo"
                 className="w-full outline-none text-sm text-[#8D8D8D]"
                 required
               />

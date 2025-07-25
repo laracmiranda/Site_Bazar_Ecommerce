@@ -1,7 +1,8 @@
 import { Link } from 'react-router-dom';
 import { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
-import { Home, Archive, ShoppingBag, LogOut, Menu, X } from 'lucide-react';
+import { Home, Archive, LogOut, SquareChevronUp, SquareChevronDown } from 'lucide-react'; // opcional, ícone
+import { Home, Archive, ShoppingBag, LogOut, Menu, X, SquareChevronUp, SquareChevronDown } from 'lucide-react';
 
 export default function Navbar() {
   const { isAuthenticated, logout } = useAuth();
@@ -82,9 +83,15 @@ export default function Navbar() {
               <Link to="/meus-itens" onClick={() => setMenuOpen(false)} className="flex items-center gap-1 text-[#4E4E4E] text-sm hover:text-[#B06D6D]">
                 <Archive size={15} /> Meus itens
               </Link>
-              <Link to="/propostas" onClick={() => setMenuOpen(false)} className="flex items-center gap-1 text-[#4E4E4E] text-sm hover:text-[#B06D6D]">
-                <ShoppingBag size={15} /> Propostas
-              </Link>
+              {/* ícone de propostas recebidas */}
+             <Link to="/recebidas" className="flex items-center gap-1 text-[#4E4E4E] text-sm hover:text-[#B06D6D]">
+                <SquareChevronDown size={15}/>Propostas recebidas
+             </Link>
+
+               {/* ícone de propostas feitas */}
+             <Link to="/feitas" className="flex items-center gap-1 text-[#4E4E4E] text-sm hover:text-[#B06D6D]">
+                <SquareChevronUp size={15}/> Propostas feitas
+         </Link>
               <button onClick={handleLogout} className="flex items-center bg-[#D9D9D9] gap-1 text-[#4E4E4E] text-sm px-4 py-2 rounded-lg hover:bg-[#b6b3b3] transition-all">
                 <LogOut size={15} /> Sair
               </button>

@@ -20,10 +20,11 @@ export default function Login() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email, senha: senha.trim() }),
       credentials: 'include',
-    });
+    });  
 
     if (res.ok) {
       const data = await res.json();
+      console.log("🔎 Resposta do login:", data); // <- isso vai mostrar se o token e o user vieram certinho
       login(data); // passa o token para o contexto
       navigate('/');
     } else {

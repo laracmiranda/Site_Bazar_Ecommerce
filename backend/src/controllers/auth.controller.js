@@ -32,15 +32,19 @@ export const login = async (req, res) => {
         res.cookie('token', token, {
         httpOnly: true,
         secure: false, // true se estiver usando HTTPS
-        sameSite: 'Lax'
+        sameSite: 'Lax',
+        maxAge: 24 * 60 * 60 * 1000, // 1 dia por exemplo
         });
 
         return res.status(200).json({ 
-            mensagem: "Login bem-sucedido",
-            cpf: usuario.cpf,
-            email: usuario.email,
-            nome: usuario.nome,
-        
+            // mensagem: "Login bem-sucedido",
+            token,
+            user: {
+                id_usuario: usuario.id_usuario, // <-- só se existir esse campo no banco
+                email: usuario.email,
+                nome: usuario.nome,
+                cpf: usuario.cpf,
+            }
         });
 
     } catch (error) {
@@ -57,7 +61,7 @@ export const logout = (req, res) => {
 
 export const sessaoAtual = (req, res) => {
     try {
-        const user = req.user;
+        const user = req.usuario;
         if(!user){
             return res.status(401).json({error: 'Usuário não autenticado'});
         }

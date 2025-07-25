@@ -2,12 +2,11 @@ import {
   listarPropostas,
   buscarPropostaPorId,
   criarProposta,
-  atualizarProposta,
   removerProposta,
   atualizarStatusProposta,
   listarPropostasPendentes,
   listarPropostasPorProponente,
-  listarPropostasPorDono,
+  // listarPropostasPorDono,
   listarPropostasPorStatus
 } from '../services/proposta.service.js';
 
@@ -60,18 +59,22 @@ export const deleteProposta = async (req, res) => {
   }
 };
 
-// Atualização do status da proposta
+export async function patchStatusProposta(req, res) {
+  const id = Number(req.params.id); // <-- Converte string para inteiro, que é o que o prisma espera
+  const { status_proposta } = req.body;
 
-export const patchStatusProposta = async (req, res) => {
+  if (!status_proposta) {
+    return res.status(400).json({ erro: "Campo 'status_proposta' é obrigatório." });
+  }
+
   try {
-    const id = Number(req.params.id);
-    const { status_proposta } = req.body; 
     const propostaAtualizada = await atualizarStatusProposta(id, status_proposta);
     res.status(200).json(propostaAtualizada);
   } catch (error) {
-    res.status(400).json({ error: 'Erro ao atualizar status da proposta', message: error.message });
+    res.status(400).json({ erro: error.message });
   }
-};
+}
+
 
 // Listagem de propostas pendentes
 
@@ -88,7 +91,7 @@ export const getPropostasPendentes = async (req, res) => {
 
 export const getPropostasPorProponente = async (req, res) => {
   try {
-    const { cpf } = req.params;
+    const { cpf } = req.usuario; // <- aqui é o certo
     const propostas = await listarPropostasPorProponente(cpf);
     res.status(200).json(propostas);
   } catch (error) {
@@ -96,17 +99,36 @@ export const getPropostasPorProponente = async (req, res) => {
   }
 };
 
-// Listagem de propostas por dono
+// // Listagem de propostas por dono
 
-export const getPropostasPorDono = async (req, res) => {
+// export const getPropostasPorDono = async (req, res) => {
+//   try {
+//     const { cpf } = req.params;
+//     const propostas = await listarPropostasPorDono(cpf);
+//     res.status(200).json(propostas);
+//   } catch (error) {
+//     res.status(500).json({ error: 'Erro ao listar propostas por dono', message: error.message });
+//   }
+// };
+
+
+import { listarPropostasPorDono } from '../services/proposta.service.js';
+
+export const getPropostasRecebidasPorUsuario = async (req, res) => {
   try {
-    const { cpf } = req.params;
+    const cpf = req.usuario.cpf; // pega o cpf do token JWT já autenticado
+    if (!cpf) {
+      return res.status(400).json({ mensagem: 'CPF do usuário não encontrado no token' });
+    }
+
     const propostas = await listarPropostasPorDono(cpf);
-    res.status(200).json(propostas);
+    res.json(propostas);
   } catch (error) {
-    res.status(500).json({ error: 'Erro ao listar propostas por dono', message: error.message });
+    console.error("Erro ao buscar propostas recebidas:", error);
+    res.status(500).json({ mensagem: "Erro ao buscar propostas recebidas" });
   }
 };
+
 
 // Listagem de propostas por status
 
