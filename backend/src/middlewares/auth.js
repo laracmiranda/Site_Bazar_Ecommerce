@@ -14,7 +14,6 @@ export const autenticar = (req, res, next) => {
     try {
         const usuario = jwt.verify(token, SECRET);
         console.log('Middleware autenticar: usuário decodificado =>', usuario);
-        console.log(req.usuario);   
         req.usuario = usuario;
         next();
     } catch (error) {
@@ -22,3 +21,4 @@ export const autenticar = (req, res, next) => {
         return res.status(401).json({ erro: 'Token inválido ou expirado' });
     }
 };
+

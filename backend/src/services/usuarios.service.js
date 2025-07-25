@@ -1,3 +1,4 @@
+import bcrypt from 'bcrypt';
 import usuariosRepository from '../repositories/usuarios.repository.js';
 import bcrypt from 'bcrypt';
 
@@ -15,12 +16,10 @@ export const criarUsuario = async (dados) => {
     if (!senha) throw new Error("Senha não fornecida");
 
     const senhaCriptografada = await bcrypt.hash(senha, 10);
-
     const usuarioComSenhaSegura = {
         ...dados,
         senha: senhaCriptografada
     };
-
     return await usuariosRepository.create(usuarioComSenhaSegura);
 };
 

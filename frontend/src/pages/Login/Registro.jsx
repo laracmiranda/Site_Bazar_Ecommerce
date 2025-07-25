@@ -25,7 +25,6 @@ export default function Registro() {
     body: JSON.stringify(dadosParaEnvio),
   });
 
-
   console.log("Dados recebidos:", dadosParaEnvio);
 
   const text = await res.text();

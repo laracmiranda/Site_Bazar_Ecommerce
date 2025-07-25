@@ -48,6 +48,3 @@ function App() {
       </AuthProvider>
     </BrowserRouter>
   );
-}
-
-export default App;
