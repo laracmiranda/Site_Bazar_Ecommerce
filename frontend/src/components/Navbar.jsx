@@ -4,9 +4,9 @@ import { useAuth } from '../context/AuthContext';
 import { Home, Archive, ShoppingBag, LogOut, Menu, X, SquareChevronUp, SquareChevronDown } from 'lucide-react';
 
 export default function Navbar() {
-  const { isAuthenticated, logout } = useAuth();
+  const { isAuthenticated, logout, user } = useAuth();
   const [menuOpen, setMenuOpen] = useState(false);
-
+  console.log('Usuário no Navbar:', user);
   const handleLogout = () => {
     logout();
     setMenuOpen(false); // Fecha o menu ao sair
@@ -67,6 +67,14 @@ export default function Navbar() {
               <Link to="/recebidas" className="flex items-center gap-1 text-[#4E4E4E] text-sm hover:text-[#B06D6D]">
                 <ShoppingBag size={15} /> Propostas
               </Link>
+              {user && (
+              <div
+                title={user.nome}
+                className="w-8 h-8 rounded-full bg-[#B06D6D] text-white flex items-center justify-center font-bold text-sm"
+              >
+                {user.nome?.charAt(0).toUpperCase()}
+              </div>
+            )}
               <button onClick={handleLogout} className="flex items-center bg-[#D9D9D9] gap-1 text-[#4E4E4E] text-sm px-4 py-2 rounded-lg hover:bg-[#b6b3b3] transition-all">
                 <LogOut size={15} /> Sair
               </button>
@@ -90,6 +98,14 @@ export default function Navbar() {
             </>
           ) : (
             <>
+              {user && (
+              <div
+                title={user.nome}
+                className="w-8 h-8 rounded-full bg-[#B06D6D] text-white flex items-center justify-center font-bold text-sm"
+              >
+                {user.nome?.charAt(0).toUpperCase()}
+              </div>
+              )}
               <Link to="/" onClick={() => setMenuOpen(false)} className="flex items-center gap-1 text-[#4E4E4E] text-sm hover:text-[#B06D6D]">
                 <Home size={15} /> Home
               </Link>
@@ -104,7 +120,8 @@ export default function Navbar() {
                {/* ícone de propostas feitas */}
              <Link to="/feitas" className="flex items-center gap-1 text-[#4E4E4E] text-sm hover:text-[#B06D6D]">
                 <SquareChevronUp size={15}/> Propostas feitas
-         </Link>
+            </Link>
+
               <button onClick={handleLogout} className="flex items-center bg-[#D9D9D9] gap-1 text-[#4E4E4E] text-sm px-4 py-2 rounded-lg hover:bg-[#b6b3b3] transition-all">
                 <LogOut size={15} /> Sair
               </button>
