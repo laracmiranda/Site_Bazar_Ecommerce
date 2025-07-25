@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { Home, Archive, LogOut, SquareChevronUp, SquareChevronDown } from 'lucide-react'; // opcional, ícone
 import { Home, Archive, ShoppingBag, LogOut, Menu, X, SquareChevronUp, SquareChevronDown } from 'lucide-react';
@@ -17,8 +17,22 @@ export default function Navbar() {
     setMenuOpen(!menuOpen);
   };
 
+  useEffect(() => {
+  const handleScroll = () => {
+    const navbar = document.getElementById('navbar');
+    if (window.scrollY > 10) {
+      navbar.classList.add('bg-white/80', 'backdrop-blur-md', 'shadow-md');
+    } else {
+      navbar.classList.remove('bg-white/80', 'backdrop-blur-md', 'shadow-md');
+    }
+  };
+
+  window.addEventListener('scroll', handleScroll);
+  return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
   return (
-    <nav className="bg-white drop-shadow-xl border-b border-gray-200 py-4 px-6 md:px-30">
+    <nav id='navbar' className="fixed top-0 w-full z-50 bg-white drop-shadow-sm border-b border-gray-200 py-4 px-6 md:px-30">
       <div className="flex justify-between items-center">
         {/* Logo */}
         <div className="flex items-center gap-2">
