@@ -221,9 +221,7 @@ export default function Home() {
           <p className="text-2xl font-bold">1200</p>
           <p className="text-gray-500">Trocas realizadas</p>
         </div>
-      </div>
-    </div>
-  );
+    </section>
 
     {/* Lista de Itens */}
     <section className="px-4 md:px-30 py-6 flex-1">
@@ -262,7 +260,12 @@ export default function Home() {
                     {!isAuthenticated ? (
                       <p className="text-xs text-[#4E4E4E]">Entre para ofertar</p>
                     ) : (
-                      <button className="bg-[#B06D6D] text-white p-2 text-xs rounded">Fazer proposta</button>
+                      <button
+                        onClick={() => handleFazerProposta(item)}
+                        className="bg-[#B06D6D] text-white p-2 text-xs rounded hover:bg-[#a05c5c] transition"
+                      >
+                        Fazer proposta
+                      </button>
                     )}
                   </div>
                 </div>

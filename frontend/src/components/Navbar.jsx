@@ -1,7 +1,6 @@
 import { Link } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
-import { Home, Archive, LogOut, SquareChevronUp, SquareChevronDown } from 'lucide-react'; // opcional, ícone
 import { Home, Archive, ShoppingBag, LogOut, Menu, X, SquareChevronUp, SquareChevronDown } from 'lucide-react';
 
 export default function Navbar() {
@@ -65,7 +64,7 @@ export default function Navbar() {
               <Link to="/meus-itens" className="flex items-center gap-1 text-[#4E4E4E] text-sm hover:text-[#B06D6D]">
                 <Archive size={15} /> Meus itens
               </Link>
-              <Link to="/propostas" className="flex items-center gap-1 text-[#4E4E4E] text-sm hover:text-[#B06D6D]">
+              <Link to="/recebidas" className="flex items-center gap-1 text-[#4E4E4E] text-sm hover:text-[#B06D6D]">
                 <ShoppingBag size={15} /> Propostas
               </Link>
               <button onClick={handleLogout} className="flex items-center bg-[#D9D9D9] gap-1 text-[#4E4E4E] text-sm px-4 py-2 rounded-lg hover:bg-[#b6b3b3] transition-all">

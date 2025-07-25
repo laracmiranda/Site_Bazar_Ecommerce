@@ -14,7 +14,7 @@ import PrivateRoute from './components/PrivateRoute';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-function AppRoutes() {
+export function AppRoutes() {
   const { isAuthenticated } = useAuth();
 
   return (
@@ -38,7 +38,7 @@ function AppRoutes() {
   );
 }
 
-function App() {
+export default function App() {
   return (
     <BrowserRouter>
       <AuthProvider>
@@ -48,3 +48,4 @@ function App() {
       </AuthProvider>
     </BrowserRouter>
   );
+}
