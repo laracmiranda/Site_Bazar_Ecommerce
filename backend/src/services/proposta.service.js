@@ -1,5 +1,6 @@
 import prisma from '../prisma/client.js';
 import propostaRepository from '../repositories/proposta.repository.js';
+import itensRepository from '../repositories/itens.repository.js';
 
 export const listarPropostas = async () => {
     return await propostaRepository.findAll();
@@ -10,84 +11,136 @@ export const buscarPropostaPorId = async (id) => {
 };
 
 export const criarProposta = async ({ item_ofertado, item_desejado, cpf_proponente }) => {
-    if (item_ofertado === item_desejado) {
-        throw new Error("Não é possível trocar um item por ele mesmo.");
-    }
+  if (item_ofertado === item_desejado) {
+    throw new Error("Não é possível trocar um item por ele mesmo.");
+  }
 
-    const itemDesejado = await prisma.itens.findUnique({
-        where: { id_item: item_desejado }
-    });
+  const [itemDesejado, itemOfertado] = await Promise.all([
+    itensRepository.findById(item_desejado),
+    itensRepository.findById(item_ofertado),
+  ]);
 
-    if (!itemDesejado) {
-        throw new Error("Item desejado não encontrado.");
-    }
+  if (!itemDesejado || !itemOfertado) {
+    throw new Error("Item ofertado ou item desejado não encontrado.");
+  }
 
-    if (itemDesejado.cpf_dono === cpf_proponente) {  
-        throw new Error("Você não pode propor troca com seu próprio item.");
-    }
+  if (!itemDesejado.status_item) {
+    throw new Error("O item desejado está indisponível para troca.");
+  }
 
-    return await propostaRepository.create({ item_ofertado, item_desejado, cpf_proponente });
-};
+  if (itemOfertado.status_item) {
+    throw new Error("Seu item ofertado já está sendo usado em outra troca.");
+  }
 
-export const atualizarProposta = async (id, dados) => {
-    return await propostaRepository.update(id, dados);
+  if (itemDesejado.cpf_dono === itemOfertado.cpf_dono) {
+    throw new Error("Você não pode propor troca entre seus próprios itens.");
+  }
+
+  if (cpf_proponente === itemDesejado.cpf_dono) {
+    throw new Error("Você não pode propor trocas com itens seus.");
+  }
+
+  const proponenteExiste = await prisma.usuarios.findUnique({ where: { cpf: cpf_proponente } });
+  if (!proponenteExiste) {
+    throw new Error("Usuário proponente não encontrado.");
+  }
+
+  const propostaDuplicada = await prisma.proposta.findFirst({
+    where: {
+      item_ofertado,
+      item_desejado,
+      cpf_proponente,
+      status_proposta: 'pendente',
+    },
+  });
+
+  if (propostaDuplicada) {
+    throw new Error("Já existe uma proposta pendente com esses itens.");
+  }
+
+  const propostasPendentes = await prisma.proposta.count({
+    where: {
+      cpf_proponente,
+      status_proposta: 'pendente',
+    },
+  });
+
+
+  // Criar a proposta
+  const propostaCriada = await propostaRepository.create({
+    item_ofertado,
+    item_desejado,
+    cpf_dono_item: itemDesejado.cpf_dono,
+    cpf_proponente,
+    status_proposta: 'pendente',
+  });
+
+  // Atualizar status dos itens usando o repository
+  await Promise.all([
+    itensRepository.update(item_ofertado, { status_item: true }),
+    itensRepository.update(item_desejado, { status_item: true }),
+  ]);
+
+  return propostaCriada;
 };
 
 export const removerProposta = async (id) => {
     return await propostaRepository.delete(id);
 };
 
+
+
 export const atualizarStatusProposta = async (id, status_proposta) => {
-    const proposta = await propostaRepository.findById(id);
+  const proposta = await propostaRepository.findById(id);
+  if (!proposta) {
+    throw new Error('Proposta não encontrada');
+  }
 
-    if (!proposta) {
-        throw new Error('Proposta não encontrada');
-    }
+  const statusAtual = proposta.status_proposta;
 
-    if (['aceita', 'rejeitada'].includes(proposta.status_proposta)) {  
-        throw new Error('Não é possível alterar o status de uma proposta já finalizada');
-    }
+  // Impedir alterações em propostas já finalizadas
+  if (['aceita', 'rejeitada', 'cancelada'].includes(statusAtual)) {
+    throw new Error('Não é possível alterar o status de uma proposta finalizada.');
+  }
 
-    if (!['aceita', 'rejeitada'].includes(status_proposta)) {  
-        throw new Error('Status inválido. Use "aceita" ou "rejeitada".');
-    }
+  // Validar entrada
+  if (!['aceita', 'rejeitada', 'cancelada'].includes(status_proposta)) {
+    throw new Error('Status inválido. Use "aceita", "rejeitada" ou "cancelada".');
+  }
 
-    // Atualiza status da proposta
-    await propostaRepository.update(id, { status_proposta });
+  // Atualizar status
+  await propostaRepository.update(id, { status_proposta });
 
-    if (status_proposta === 'aceita') {
-        const { item_ofertado, item_desejado } = proposta;
+  const { item_ofertado, item_desejado } = proposta;
 
-        // Marcar itens como indisponíveis
-        await prisma.itens.update({
-            where: { id_item: item_ofertado },
-            data: { status_item: false },
-        });
+  if (status_proposta === 'aceita') {
+    // Itens permanecem indisponíveis (já estão com status_item = false)
+    // Rejeitar outras propostas com os mesmos itens
+    await prisma.proposta.updateMany({
+      where: {
+        status_proposta: 'pendente',
+        id_proposta: { not: id },
+        OR: [
+          { item_ofertado: item_ofertado },
+          { item_desejado: item_desejado },
+          { item_ofertado: item_desejado },
+          { item_desejado: item_ofertado },
+        ],
+      },
+      data: { status_proposta: 'rejeitada' },
+    });
+  }
 
-        await prisma.itens.update({
-            where: { id_item: item_desejado },
-            data: { status_item: false },  // corrigido para status_item
-        });
+  if (status_proposta === 'rejeitada' || status_proposta === 'cancelada') {
+    // Liberar os itens para novas propostas
+    await Promise.all([
+      itensRepository.update(item_ofertado, { status_item: false }),
+      itensRepository.update(item_desejado, { status_item: false }),
+    ]);
+  }
 
-        // Rejeitar outras propostas pendentes envolvendo esses itens
-        await prisma.proposta.updateMany({
-            where: {
-                status_proposta: 'pendente',  
-                id_proposta: { not: id },
-                OR: [
-                    { item_ofertado: item_ofertado },
-                    { item_desejado: item_desejado },
-                    { item_ofertado: item_desejado },
-                    { item_desejado: item_ofertado },
-                ],
-            },
-            data: { status_proposta: 'rejeitada' },  
-        });
-    }
-
-    return { mensagem: `Proposta ${status_proposta} com sucesso.` };
+  return { mensagem: `Proposta ${status_proposta} com sucesso.` };
 };
-
 
 export const listarPropostasPendentes = () => {
   return propostaRepository.findPendentes();

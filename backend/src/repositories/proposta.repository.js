@@ -1,18 +1,27 @@
 import prisma from '../prisma/client.js';
 
 class propostaRepository {
+
     findAll() {
-        return prisma.proposta.findMany({            
-            include: {
-                //conforme o nome no schema.prisma
+        return prisma.proposta.findMany({
+                include: {
                 DonoItem: true,
                 proponente: true,
-                itemDesejado: true,
-                itemOfertado: true
-            }
+                itemDesejado: {
+                    include: {
+                    DonoItem: true,
+                    },
+                },
+                itemOfertado: {
+                    include: {
+                    DonoItem: true,
+                    },
+                },
+            },
         });
-    };
+    }
 
+    
     findById(id) {
         return prisma.proposta.findUnique({
             where: {
@@ -40,18 +49,48 @@ class propostaRepository {
         });
     }
 
-    //Achar propostas de acordo com o proponente
     findByProponente(cpf) {
         return prisma.proposta.findMany({
-            where: {cpf_proponente: cpf},
-            include: { 
-                DonoItem: true, 
-                proponente: true, 
-                itemDesejado: true, 
-                itemOfertado: true
-            }
+            where: { cpf_proponente: cpf },
+            select: {
+                id_proposta: true,
+                status_proposta: true,
+
+                // Dados do item desejado
+                itemDesejado: {
+                    select: {
+                        nome: true,
+                        categoria: true,
+                        imagem: true,
+                    },
+                },
+
+                // Dados do item ofertado
+                itemOfertado: {
+                    select: {
+                        nome: true,
+                        categoria: true,
+                        imagem: true,
+                    },
+                },
+
+                // Dados do proponente (usuário logado)
+                proponente: {
+                    select: {
+                        nome: true,
+                    },
+                },
+
+                // Dono do item desejado (quem vai receber a proposta)
+                DonoItem: {
+                    select: {
+                        nome: true,
+                    },
+                },
+            },
         });
     }
+
 
     //Achar propostas de acordo com o dono
     findByDonoItem(cpf) {

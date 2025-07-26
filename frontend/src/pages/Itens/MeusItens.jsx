@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Plus, Package, Archive, Trash, SquarePen, CircleAlert, CircleChevronLeft, CircleChevronRight } from 'lucide-react';
+import { Plus, Package, Archive, Trash, SquarePen, CircleAlert, CircleChevronLeft, CircleChevronRight, Search } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import ModalConfirmacao from '../../components/ModalConfirmacao';
@@ -8,6 +8,19 @@ export default function MeusItens() {
   const [itens, setItens] = useState([]);
   const [erro, setErro] = useState(null);
   const [carregando, setCarregando] = useState(true);
+  
+  async function tratarResposta(response) {
+  if (response.status === 401) {
+    alert('Sua sessão expirou');
+    window.location.href = '/'; // redireciona para home
+    return null; // ou throw para interromper
+  }
+  if (!response.ok) {
+    const errorMsg = await response.text();
+    throw new Error(errorMsg || 'Erro desconhecido');
+  }
+  return response.json();
+  }
 
   useEffect(() => {
   const fetchItens = async () => {
@@ -20,8 +33,10 @@ export default function MeusItens() {
         throw new Error('Erro ao buscar os itens');
       }
 
-      const dados = await response.json();
-      setItens(dados);
+      const dados = await tratarResposta(response);
+      if (dados) {
+        setItens(dados);
+      }
     } catch (err) {
       setErro(err.message);
     } finally {
@@ -32,28 +47,6 @@ export default function MeusItens() {
   fetchItens();
   }, []);
 
-  useEffect(() => {
-
-    const fetchItens = async () => {
-      try {
-        const response = await fetch('http://localhost:3000/itens/meus-itens', {
-          credentials: 'include', // 
-        });
-
-        if (!response.ok) {
-          throw new Error('Erro ao buscar os itens');
-        }
-
-        const dados = await response.json();
-        setItens(dados);
-      } catch (err) {
-        setErro(err.message);
-      }
-    };
-
-    fetchItens();
-  }, []);
-
   const [itemASerExcluido, setItemASerExcluido] = useState(null);
   const [modalVisivel, setModalVisivel] = useState(false);
 
@@ -61,6 +54,9 @@ export default function MeusItens() {
   try {
     const res = await fetch(`http://localhost:3000/itens/${id}`, {
       method: 'DELETE',
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem('token')}`
+      },
       credentials: 'include', // se precisar de cookie/token
     });
 
@@ -68,7 +64,8 @@ export default function MeusItens() {
       throw new Error('Erro ao deletar o item');
     }
 
-    const data = await res.json();
+    const data = await tratarResposta(res);
+    if (!data) return;
     toast.success(data.message || 'ITem excluído com sucesso');
 
     // Atualiza a lista local, removendo o item deletado
@@ -82,12 +79,22 @@ export default function MeusItens() {
     }
   }
 
+    const [search, setSearch] = useState("");
+
+    const filteredItens = itens.filter((item) => {
+        const matchesSearch = [item.nome, item.descricao].some((field) =>
+          field?.toLowerCase().includes(search.toLowerCase())
+        );
+    
+        return matchesSearch;
+      });
+
     const [paginaAtual, setPaginaAtual] = useState(1);
     const itensPorPagina = 8;
 
-    const totalPaginas = Math.ceil(itens.length / itensPorPagina);
+    const totalPaginas = Math.ceil(filteredItens.length / itensPorPagina);
 
-    const itensPaginados = itens.slice(
+    const itensPaginados = filteredItens.slice(
       (paginaAtual - 1) * itensPorPagina,
       paginaAtual * itensPorPagina
     );
@@ -110,15 +117,32 @@ export default function MeusItens() {
 
   return (
     <div className='min-h-screen'>
-      <div className='flex flex-row justify-between items-center py-10 px-40 md:px-30'>
-      <div className='flex flex-col'>
-        <h1 className="text-2xl font-semibold text-[#B06d6d]">Meus Itens</h1>
-        <p>Gerencie seus itens</p>
+      <section className="bg-white py-4 px-4 md:px-8 flex flex-col md:flex-row items-center gap-4 shadow justify-center">
+          <div className="flex items-center border border-[#c2c2c2] rounded px-3 py-2 max-w-screen-sm mx-auto w-full">
+            <Search className="w-4 h-4 text-gray-500 mr-2" />
+            <input
+              className="w-full outline-none"
+              placeholder="Buscar Itens"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+            />
+          </div>
+      </section>
+      <div className="flex flex-col px-6 md:px-30 mt-10">
+        <div className="flex flex-col md:flex-row justify-between items-center md:items-center gap-4 mb-6 max-w-screen-xl mx-auto w-full">
+          <div>
+            <h1 className="text-2xl font-semibold text-[#B06d6d]">Meus Itens</h1>
+            <p>Gerencie seus itens</p>
+          </div>
+          <Link
+            to="/cadastro-item"
+            className="flex items-center gap-2 bg-[#B06D6D] text-white text-sm px-4 py-2 rounded-lg hover:bg-[#c27a7a] transition-all"
+          >
+            <Plus size={15} /> Novo Item
+          </Link>
+        </div>
       </div>
-      <Link to="/cadastro-item" className="flex flex-row gap-1 bg-[#B06D6D] text-white text-sm px-4 py-2 rounded-lg hover:bg-[#c27a7a] transition-all justify-center items-center">
-            <Plus size={15}/> Novo Item
-      </Link>
-    </div>
+      
     {carregando ? (
       <ul className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 px-10 pb-10 md:px-30">
         {[...Array(4)].map((_, index) => (

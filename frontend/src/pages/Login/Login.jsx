@@ -3,10 +3,11 @@ import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { Lock, Eye, EyeOff, User } from 'lucide-react';
+import { toast } from 'react-toastify';
 
 export default function Login() {
   const { login } = useAuth();
-  const [cpf, setCPF] = useState('');
+  const [email, setEmail] = useState('');
   const [senha, setSenha] = useState('');
   const [mostrarSenha, setMostrarSenha] = useState(false);
   const navigate = useNavigate();
@@ -17,16 +18,18 @@ export default function Login() {
     const res = await fetch('http://localhost:3000/login', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ cpf, senha }),
+      body: JSON.stringify({ email, senha: senha.trim() }),
       credentials: 'include',
-    });
+    });  
 
     if (res.ok) {
       const data = await res.json();
+      console.log("Resposta do login:", data); 
+
       login(data); // passa o token para o contexto
       navigate('/');
     } else {
-      alert('Login falhou');
+      toast.error('Login falhou');
     }
   };
 
@@ -38,15 +41,15 @@ export default function Login() {
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium mb-1 text-[#1E1E1E]">CPF</label>
+            <label className="block text-sm font-medium mb-1 text-[#1E1E1E]">Email</label>
             <div className="flex items-center border rounded px-3 py-2 border-[#8D8D8D]">
               <User size={16} className="text-[#8D8D8D] mr-2" />
               <input
                 type="text"
-                name="cpf"
-                value={cpf}
-                onChange={(e) => setCPF(e.target.value)}
-                placeholder="Insira seu CPF"
+                name="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="Insira seu email"
                 className="w-full outline-none text-sm text-[#8D8D8D]"
                 required
               />

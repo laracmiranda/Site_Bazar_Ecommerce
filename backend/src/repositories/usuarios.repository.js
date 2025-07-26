@@ -19,18 +19,24 @@ class usuariosRepository {
                 cpf
             },
            select: {
-                cpf: true, senha: true
+                cpf: true, senha: true, id_usuario: true
             },
         });
     };
 
-    // Achar usuários através do email dele
-
-    findUserByEmail(email) {
+  findUserByEmail(email) {
         return prisma.usuarios.findUnique({
-            where: { email }
-        });
+            where: { email },
+            select: {
+                id_usuario: true,
+                email: true,
+                nome: true,
+                cpf: true,
+                senha: true, // necessário para verificar no login
+            }
+    });
     }
+
 
     // Listagem de propostas que o usuário fez
 
