@@ -3,8 +3,9 @@ import {  Search,  Smile,  Tag,  ListFilter,  CircleChevronLeft,  CircleChevronR
 import { useEffect, useState } from "react";
 import { Navigate, useNavigate } from "react-router-dom";
 import Footer from "../components/Footer";
-import ModalProposta from "../components/ModalProposta"; // ✅ IMPORTADO
-import axios from "axios";
+import ModalProposta from "../components/ModalProposta"; 
+import { toast } from 'react-toastify';
+
 
 
 export default function Home() {
@@ -31,42 +32,71 @@ export default function Home() {
   // Função para enviar proposta
 
     const handleEnviarProposta = async (proposta) => {
-    if (!user || !user.cpf) {
-      console.error("Usuário não logado ou CPF não disponível.");
-      alert("Você precisa estar logado para enviar propostas.");
-      return;
-    }
+      if (!user || !user.cpf) {
+        console.error("Usuário não logado ou CPF não disponível.");
+        toast.error("Você precisa estar logado para enviar propostas.");
+        return;
+      }
 
-    const payload = {
-      cpf_proponente: user.cpf,
-      ...proposta,
-      status_proposta: "pendente",
+      // Buscar o item desejado na lista de itens disponíveis
+      const itemDesejado = itens.find((item) => item.id_item === proposta.item_desejado);
+
+      // Garantir que ambos os itens estão com status false
+      const itemOfertado = meusItens.find((item) => item.id_item === proposta.item_ofertado);
+
+      if (!itemDesejado || itemDesejado.status_item !== true) {
+        toast.error("O item desejado não está disponível para troca.");
+        return;
+      }
+
+      if (!itemOfertado || itemOfertado.status_item !== false) {
+        toast.error("O seu item ofertado não está disponível para troca.");
+        return;
+      }
+
+      const payload = {
+        cpf_proponente: user.cpf,
+        item_ofertado: Number(proposta.item_ofertado),
+        item_desejado: Number(proposta.item_desejado),
+        cpf_dono_item: proposta.cpf_dono_item,
+        status_proposta: "pendente",
+      };
+
+      console.log("Enviando proposta:", payload);
+
+      try {
+        const res = await fetch("http://localhost:3000/propostas", {
+          method: "POST",
+          credentials: "include",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        }); 
+
+        console.log("item ofertado encontrado:", itemOfertado);
+        console.log("meusItens disponíveis:", meusItens);
+
+
+        if (!res.ok) {
+          const errorText = await res.text();
+          throw new Error(`Erro ao enviar proposta: ${res.status} - ${errorText}`);
+        }
+
+        toast.success("Proposta enviada com sucesso!");
+        setModalVisivel(false);
+      } catch (error) {
+        console.error("Erro ao enviar proposta:", error);
+        toast.error("Erro ao enviar proposta.");
+      }
     };
 
-    try {
-      const res = await fetch("http://localhost:3000/propostas", {
-        method: "POST",
-        credentials: "include",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
 
-      if (!res.ok) throw new Error("Erro ao enviar proposta");
-
-      alert("Proposta enviada com sucesso!");
-      setModalVisivel(false);
-    } catch (error) {
-      console.error("Erro ao enviar proposta:", error);
-      alert("Erro ao enviar proposta.");
-    }
-  };
 
    useEffect(() => {
       const fetchMeusItens = async () => {
         try {
           const res = await fetch("http://localhost:3000/itens/meus-itens", {
             method: "GET",
-            credentials: "include", // importante para enviar cookies
+            credentials: "include", 
           });
 
           if (!res.ok) {
@@ -76,21 +106,29 @@ export default function Home() {
           }
 
           const data = await res.json();
-          console.log("Dados brutos da API para 'meus-itens':", data); // NOVO LOG AQUI
+          console.log("Dados brutos da API para 'meus-itens':", data); 
 
-          // Filtra os itens apenas do usuário logado
+          console.log("Meus itens disponíveis para troca:", meusItens.filter((item) => item.status_item === false));
+
           const itensFiltrados = data.filter(item => {
-            const isOwner = item.cpf_dono === user?.cpf; // AQUI ESTÁ A COMPARAÇÃO CRÍTICA
-            console.log(`Comparando: Item CPF_DONO=${item.cpf_dono} com USUARIO CPF=${user?.cpf}. Resultado: ${isOwner}`); // NOVO LOG AQUI PARA DEBUG DA COMPARAÇÃO
-            return isOwner;
-          });
+            const isOwner = item.cpf_dono === user?.cpf;
+            const estaDisponivel = item.status_item === false;
+            return isOwner && estaDisponivel;
+        });
+
+
+
+
 
           setMeusItens(itensFiltrados);
-          console.log("Meus itens filtrados:", itensFiltrados); // NOVO LOG AQUI PARA VER O RESULTADO FINAL
+          console.log("Meus itens filtrados:", itensFiltrados); 
         } catch (err) {
           console.error("Erro ao buscar meus itens:", err);
         }
       };
+
+
+      
 
       // Garante que 'usuario' e 'usuario.cpf' existem antes de tentar buscar os itens
       if (user && user.cpf) {

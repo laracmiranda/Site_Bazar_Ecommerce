@@ -2,7 +2,7 @@
 import React, { useEffect, useState, useContext } from "react";
 import axios from "axios";
 import CardRecebidas from "../../components/CardRecebidas";
-import { useAuth } from "../../context/AuthContext"; // ajuste o caminho conforme sua estrutura
+import { useAuth } from "../../context/AuthContext";
 
 export default function Recebidas() {
   const { usuario } = useAuth(); // pega o usuário logado do contexto
@@ -17,8 +17,7 @@ export default function Recebidas() {
       });
 
       console.log("Propostas completas:", res.data);
-
-
+      
       setPropostasRecebidas(res.data);
 
     } catch (error) {

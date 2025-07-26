@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react"
 import axios from "axios"
 import PropostasFeitas from "../../components/CardFeitas"
+import { toast } from 'react-toastify';
 
 export default function PropostasPage() {
   const [propostas, setPropostas] = useState()
@@ -36,7 +37,7 @@ export default function PropostasPage() {
   }
 
   if (proposta.status_proposta !== "pendente") {
-    alert("Apenas propostas pendentes podem ser canceladas.")
+    toast.error("Apenas propostas pendentes podem ser canceladas.")
     return
   }
 
@@ -53,10 +54,10 @@ export default function PropostasPage() {
       )
     )
 
-    alert("Proposta cancelada com sucesso!")
+    toast.success("Proposta cancelada com sucesso!")
   } catch (error) {
     console.error("Erro ao cancelar proposta:", error)
-    alert("Erro ao cancelar proposta. Tente novamente.")
+    toast.error("Erro ao cancelar proposta. Tente novamente.")
   }
 }
   

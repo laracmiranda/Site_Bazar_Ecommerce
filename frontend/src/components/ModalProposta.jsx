@@ -38,19 +38,28 @@ export default function ModalProposta({
         <p className="text-sm text-gray-600 mb-2">Escolha um dos seus itens para oferecer em troca:</p>
 
         <div className="flex flex-col w-full gap-2">
-          {itensPaginados.map((item) => (
-            <button
-              key={item.id_item}
-              onClick={() => setItemSelecionado(item.id_item)}
-              className={`p-3 rounded border text-sm text-left transition ${
-                itemSelecionado === item.id_item
-                  ? 'bg-[#FEE2E2] border-[#B91C1C] text-[#B91C1C]'
-                  : 'bg-white border-gray-300 hover:bg-gray-100'
-              }`}
-            >
-              <p className="font-semibold">{item.nome}</p>
-              <p className="text-xs text-gray-600">{item.categoria}</p>
-            </button>
+         {itensPaginados.map((item) => (
+              <button
+                key={item.id_item}
+                onClick={() => setItemSelecionado(item.id_item)}
+                className={`p-3 rounded border text-sm text-left transition ${
+                  itemSelecionado === item.id_item
+                    ? 'bg-[#FEE2E2] border-[#B91C1C] text-[#B91C1C]'
+                    : 'bg-white border-gray-300 hover:bg-gray-100'
+                }`}
+              >
+                <div className="flex items-center gap-3">
+                  <img
+                    src={item.imagem || "https://via.placeholder.com/40"}
+                    alt={item.nome}
+                    className="w-10 h-10 object-cover rounded"
+                  />
+                  <div>
+                    <p className="font-semibold">{item.nome}</p>
+                    <p className="text-xs text-gray-600">{item.categoria}</p>
+                  </div>
+                </div>
+              </button>
           ))}
         </div>
 
