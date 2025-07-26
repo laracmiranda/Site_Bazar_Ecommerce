@@ -1,10 +1,14 @@
   "use client"
 
-  import { FileText, Clock, CheckCircle, XCircle } from "lucide-react"
+import { CircleChevronLeft, CircleChevronRight, FileText, Ghost, Plus, X } from "lucide-react"
+import ModalConfirmacao from "./ModalConfirmacao"
+import React, { useState } from "react"
+import CardSkeleton from "./CardSkeleton"
+import { Link } from "react-router-dom"
 
  // Ajuste para consistência com o backend se 'recusada' for equivalente a 'rejeitada'
 const getStatusBadge = (status) => {
-  const baseClasses = "inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium"
+  const baseClasses = "px-3 py-1 rounded-full text-sm font-medium"
 
   switch (status) {
     case "pendente":
@@ -20,29 +24,29 @@ const getStatusBadge = (status) => {
   }
 }
 
-const getStatusIcon = (status) => {
+const getBorderColorByStatus = (status) => {
   switch (status) {
     case "pendente":
-      return <Clock className="w-4 h-4 text-yellow-600" />
+      return "border-yellow-400"
     case "aceita":
-      return <CheckCircle className="w-4 h-4 text-green-600" />
-    case "rejeitada": // <-- Mudei de 'recusada' para 'rejeitada'
-      return <XCircle className="w-4 h-4 text-red-600" />
+      return "border-green-500"
+    case "rejeitada":
+      return "border-red-500"
     case "cancelada":
-      return <XCircle className="w-4 h-4 text-gray-500" />
+      return "border-gray-400"
     default:
-      return null
+      return "border-gray-200"
   }
 }
 
 const getStatusMessage = (status) => {
   switch (status) {
     case "aceita":
-      return <p className="text-green-600 font-medium text-center">Esta proposta foi aceita.</p>
+      return <p className="text-green-600 font-medium text-center">Esta proposta foi aceita</p>
     case "rejeitada": // <-- Mudei de 'recusada' para 'rejeitada'
-      return <p className="text-red-600 font-medium text-center">Esta proposta foi rejeitada.</p>
+      return <p className="text-red-600 font-medium text-center">Esta proposta foi rejeitada</p>
     case "cancelada":
-      return <p className="text-gray-600 font-medium text-center">Esta proposta foi cancelada.</p>
+      return <p className="text-gray-600 font-medium text-center">Esta proposta foi cancelada</p>
     default:
       return null
   }
@@ -52,102 +56,169 @@ export default function PropostasFeitas({
   propostas = [], // Garante que propostas é um array, mesmo se vier null do pai
   loading = false,
   onCancelarProposta,
-  onEditarProposta,
 }) {
+
+  const [modalVisivel, setModalVisivel] = useState(false)
+  const [propostaSelecionada, setPropostaSelecionada] = useState(null)
+  const [paginaAtual, setPaginaAtual] = useState(1)
+  const itensPorPagina = 5
+
+  const abrirModalCancelar = (propostaId) => {
+    setPropostaSelecionada(propostaId)
+    setModalVisivel(true)
+  }
+
+  const confirmarCancelamento = () => {
+    if (propostaSelecionada) {
+      onCancelarProposta(propostaSelecionada)
+      setModalVisivel(false)
+      setPropostaSelecionada(null)
+    }
+  }
+
+  const cancelarModal = () => {
+    setModalVisivel(false)
+    setPropostaSelecionada(null)
+  }
+
   const handleCancelarProposta = (id) => {
     if (onCancelarProposta) onCancelarProposta(id)
   }
 
+  // Paginação
+  const indiceInicial = (paginaAtual - 1) * itensPorPagina
+  const indiceFinal = indiceInicial + itensPorPagina
+  const propostasPaginadas = propostas.slice(indiceInicial, indiceFinal)
+  const totalPaginas = Math.ceil(propostas.length / itensPorPagina)
   
     return (
-      <div className="max-w-4xl mx-auto px-6 py-8">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Propostas Feitas</h1>
-          <p className="text-gray-600">Acompanhe o status das suas propostas de troca</p>
-        </div>
-
+      <div className="max-w-4xl mx-auto mb-10 px-4">
         <div className="space-y-6">
-          {propostas.map((proposta) => (
-            <div key={proposta.id_proposta} className="bg-white border border-gray-200 rounded-lg shadow-sm">
+          {loading ? (
+          <>
+            <CardSkeleton />
+            <CardSkeleton />
+          </>
+          ) : (
+          propostasPaginadas.map((proposta) => (
+            <div key={proposta.id_proposta} className={`bg-white border rounded-lg shadow-md ${getBorderColorByStatus(proposta.status_proposta)}`}>
               <div className="flex flex-row items-center justify-between p-6 pb-4">
-                <div className="flex items-center gap-2">
-                  {getStatusIcon(proposta.status_proposta)}
-                  <h3 className="text-lg font-semibold text-gray-900">Proposta de Troca</h3>
+                <div className='flex flex-col'>
+                  <h2 className="text-lg font-semibold text-[#4E4E4E]">Proposta de Troca</h2>
+                    {/* Dono e Proponente */}
+                  <div className="text-sm text-[#4E4E4E]">
+                    <p>
+                      Para: <strong>{proposta.DonoItem?.nome}</strong> — Proposto por:{" "}
+                      <strong>{proposta.proponente?.nome}</strong>
+                    </p>
+                  </div>
+
                 </div>
                 {getStatusBadge(proposta.status_proposta)}
               </div>
 
               <div className="px-6 pb-6">
-                <div className="flex flex-col md:flex-row gap-6 mb-6">
-                  {/* Item Desejado */}
-                  <div className="flex-1">
-                    <h4 className="font-medium text-gray-900 mb-2">Item Desejado:</h4>
-                    <img
-                      src={proposta.itemDesejado?.imagem}
-                      alt={proposta.itemDesejado?.nome}
-                      className="w-32 h-32 object-cover rounded-md mb-2"
-                    />
-                    <div className="space-y-1">
-                      <p className="font-semibold text-gray-800">{proposta.itemDesejado?.nome}</p>
-                      <p className="text-gray-600">{proposta.itemDesejado?.categoria}</p>
+                <div className="flex flex-col lg:flex-row justify-between w-full gap-5">
+                  <div className='flex flex-col flex-1 bg-[#F9FAFB] py-2 px-3 rounded-sm mb-4 lg:mb-0'>
+                    <h3 className="text-sm font-medium text-[#4E4E4E] mb-3">Seu Item Desejado:</h3>
+                      <div className='flex justify-baseline gap-3'>
+                        <img
+                          src={proposta.itemDesejado?.imagem}
+                          alt={proposta.itemDesejado?.nome}
+                          className="w-16 h-16 object-cover rounded-md mb-2"
+                        />
+                        <div className='flex flex-col'>
+                          <p className="font-semibold mb-1 text-[#B06D6D]">{proposta.itemDesejado?.nome}</p>
+                          <p className="text-sm text-[#4E4E4E]">{proposta.itemDesejado?.categoria}</p>
+                      </div>
                     </div>
                   </div>
 
-                  {/* Item Ofertado */}
-                  <div className="flex-1">
-                    <h4 className="font-medium text-gray-900 mb-2">Item Ofertado:</h4>
-                    <img
-                      src={proposta.itemOfertado?.imagem}
-                      alt={proposta.itemOfertado?.nome}
-                      className="w-32 h-32 object-cover rounded-md mb-2 mx-auto"
-                    />
-                    <div className="space-y-1">
-                      <p className="font-semibold text-gray-800">{proposta.itemOfertado?.nome}</p>
-                      <p className="text-gray-600">{proposta.itemOfertado?.categoria}</p>
-                    </div>
+                  <div className='flex flex-col flex-1 bg-white py-2 px-3 rounded-sm'>
+                    <h3 className="text-sm font-medium text-[#4E4E4E] mb-3">Item Ofertado:</h3>
+                    <div className='flex justify-baseline gap-3'>
+                      <img
+                        src={proposta.itemOfertado?.imagem}
+                        alt={proposta.itemOfertado?.nome}
+                        className="w-16 h-16 object-cover rounded-md mb-2"
+                      />
+                      <div className='flex flex-col'>
+                          <p className="font-semibold mb-1 text-[#B06D6D]">{proposta.itemOfertado?.nome}</p>
+                          <p className="text-sm text-[#4E4E4E]">{proposta.itemOfertado?.categoria}</p>
+                      </div>
                   </div>
                 </div>
+              </div>
+
+                {/* Linha divisória */}
+                <hr className="my-6 border-gray-200" />
 
                 {/* Ações */}
                 {proposta.status_proposta === "pendente" ? (
                   <div className="flex flex-col sm:flex-row gap-3 justify-center">
                     <button
-                      className="px-4 py-2 text-sm font-medium rounded-md border border-red-200 text-red-700 bg-transparent hover:bg-red-50"
-                      onClick={() => handleCancelarProposta(proposta.id_proposta)}
+                      className="flex gap-2 items-center justify-center px-4 py-2 bg-[#D62626] text-white rounded-md hover:bg-[#e75b5b] focus:outline-none focus:ring-2 focus:ring-[#D62626] focus:ring-offset-2"
+                      onClick={() => abrirModalCancelar(proposta.id_proposta)}
                     >
+                      <X size={16}/>
                       Cancelar Proposta
-                    </button>
-
-                    <button
-                      className="px-4 py-2 text-sm font-medium rounded-md border border-blue-200 text-blue-700 bg-transparent hover:bg-blue-50"
-                      onClick={() => handleEditarProposta(proposta.id_proposta)}
-                    >
-                      Editar Proposta
                     </button>
                   </div>
                 ) : (
                   getStatusMessage(proposta.status_proposta)
                 )}
 
-                {/* Dono e Proponente */}
-                <div className="mt-4 text-sm text-gray-600 text-center">
-                  <p>
-                    Para: <strong>{proposta.DonoItem?.nome}</strong> — Proposto por:{" "}
-                    <strong>{proposta.proponente?.nome}</strong>
-                  </p>
-                </div>
               </div>
             </div>
-          ))}
+            ))
+          )}
         </div>
 
-        {propostas.length === 0 && !loading && (
-          <div className="text-center py-12">
-            <FileText className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-            <h3 className="text-lg font-medium text-gray-900 mb-2">Nenhuma proposta feita</h3>
-            <p className="text-gray-600">Você ainda não fez nenhuma proposta de troca.</p>
+        {!loading && propostas.length === 0 && (
+          <div className="flex flex-col items-center justify-center px-10 pb-10 mt-10 gap-1 text-center text-gray-500">
+            <Ghost size={64} className="mb-4 stroke-[#8D8D8D]" />
+            <p className="text-lg font-medium text-[#1E1E1E]">Nenhuma proposta enviada ainda</p>
+            <p className="text-sm text-[#4E4E4E] mb-4">Registre um item legal!</p>
+            <Link to="/cadastro-item" className="inline-flex items-center gap-2 px-4 py-2 bg-[#B06D6D] text-white text-sm rounded-lg hover:bg-[#c27a7a] transition-all">
+              <Plus size={16} /> Adicionar Item
+            </Link>
+      </div>
+        )}
+
+        {!loading && totalPaginas > 1 && (
+          <div className="flex justify-center items-center mt-5 mb-10 gap-4">
+            <button
+              onClick={() => setPaginaAtual((prev) => Math.max(prev - 1, 1))}
+              disabled={paginaAtual === 1}
+              className="px-4 py-2 disabled:opacity-50"
+            >
+              <CircleChevronLeft className="text-[#4E4E4E]" />
+            </button>
+
+            <span className="text-xs text-[#4E4E4E]">
+              Página {paginaAtual} de {totalPaginas}
+            </span>
+
+            <button
+              onClick={() => setPaginaAtual((prev) => Math.min(prev + 1, totalPaginas))}
+              disabled={paginaAtual === totalPaginas}
+              className="px-4 py-2 disabled:opacity-50"
+            >
+              <CircleChevronRight className="text-[#4E4E4E]" />
+            </button>
           </div>
         )}
+
+
+        <ModalConfirmacao
+          visivel={modalVisivel}
+          titulo="Cancelar Proposta"
+          mensagem="Tem certeza que deseja cancelar esta proposta?"
+          onCancelar={cancelarModal}
+          onConfirmar={confirmarCancelamento}
+          textoBotaoCancelar="Voltar"
+          textoBotaoConfirmar="Cancelar"
+        />
       </div>
     )
   }

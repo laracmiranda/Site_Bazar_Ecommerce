@@ -7,14 +7,13 @@ import Login from './pages/Login/Login';
 import MeusItens from './pages/Itens/MeusItens';
 import CadastroItem from './pages/Itens/CadastroItem';
 import EditarItem from './pages/Itens/EditarItem';
-import Propostas from './pages/Propostas/Propostas';
 import Recebidas from './pages/Propostas/Recebidas';
 import Feitas from './pages/Propostas/Feitas';
 import PrivateRoute from './components/PrivateRoute';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-function AppRoutes() {
+export function AppRoutes() {
   const { isAuthenticated } = useAuth();
 
   return (
@@ -31,14 +30,13 @@ function AppRoutes() {
       <Route path="/meus-itens" element={<PrivateRoute><MeusItens /></PrivateRoute>} />
       <Route path="/cadastro-item" element={<PrivateRoute><CadastroItem /></PrivateRoute>} />
       <Route path="/editar-item/:id" element={<PrivateRoute><EditarItem /></PrivateRoute>} />
-      <Route path="/propostas" element={<PrivateRoute><Propostas /></PrivateRoute>} />
       <Route path="/recebidas" element={<PrivateRoute><Recebidas /></PrivateRoute>} />
       <Route path="/feitas" element={<PrivateRoute><Feitas /></PrivateRoute>} />
     </Routes>
   );
 }
 
-function App() {
+export default function App() {
   return (
     <BrowserRouter>
       <AuthProvider>
@@ -48,3 +46,4 @@ function App() {
       </AuthProvider>
     </BrowserRouter>
   );
+}

@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react"
 import axios from "axios"
 import PropostasFeitas from "../../components/CardFeitas"
-import { toast } from 'react-toastify';
+import { toast } from "react-toastify"
 
 export default function PropostasPage() {
   const [propostas, setPropostas] = useState()
@@ -17,7 +17,10 @@ export default function PropostasPage() {
         withCredentials: true,
       })
       console.log("Resposta da API:", response.data)
-      setPropostas(response.data) 
+
+      const propostasOrdenadas = response.data.sort((a, b) => b.id_proposta - a.id_proposta);
+      setPropostas(propostasOrdenadas);
+
       setLoading(false)
     } catch (error) {
       console.error("Erro ao buscar propostas:", error)
@@ -32,12 +35,12 @@ export default function PropostasPage() {
   const proposta = propostas.find((p) => p.id_proposta === propostaId)
 
   if (!proposta) {
-    alert("Proposta não encontrada.")
+    toast.error("Proposta não encontrada.")
     return
   }
 
   if (proposta.status_proposta !== "pendente") {
-    toast.error("Apenas propostas pendentes podem ser canceladas.")
+    toast.warning("Apenas propostas pendentes podem ser canceladas.")
     return
   }
 
@@ -79,14 +82,16 @@ export default function PropostasPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <main>
+    <div className="min-h-screen">
+      <div className="px-4 md:px-30 py-10 flex-1 flex flex-col gap-2">
+        <h1 className="text-2xl font-semibold text-[#B06d6d]">Propostas Realizadas</h1>
+        <p>Acompanhe o status das suas propostas de troca</p>
+      </div>
         <PropostasFeitas
           propostas={propostas}
           loading={loading}
           onCancelarProposta={handleCancelarProposta}      
         />
-      </main>
     </div>
   )
 }
