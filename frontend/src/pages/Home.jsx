@@ -58,7 +58,7 @@ export default function Home() {
       setModalVisivel(false);
     } catch (error) {
       console.error("Erro ao enviar proposta:", error);
-      toast.error("Erro ao enviar proposta.");
+      toast.error("Erro ao enviar proposta: Item próprio!");
     }
   };
 

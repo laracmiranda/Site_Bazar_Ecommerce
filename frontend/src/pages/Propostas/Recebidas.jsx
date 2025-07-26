@@ -2,11 +2,12 @@
 import React, { useEffect, useState, useContext } from "react";
 import axios from "axios";
 import CardRecebidas from "../../components/CardRecebidas";
-import { useAuth } from "../../context/AuthContext"; // ajuste o caminho conforme sua estrutura
+import { useAuth } from "../../context/AuthContext"; 
 import ModalConfirmacao from "../../components/ModalConfirmacao";
 import { toast } from "react-toastify";
-import CardSkeleton from "../../components/CardSkeleton"; // ajuste o caminho conforme necessário
-import { CircleChevronLeft, CircleChevronRight } from "lucide-react";
+import CardSkeleton from "../../components/CardSkeleton"; 
+import { CircleChevronLeft, CircleChevronRight, Ghost, Plus } from "lucide-react";
+import { Link } from "react-router-dom";
 
 export default function Recebidas() {
   const { usuario } = useAuth(); // pega o usuário logado do contexto
@@ -98,7 +99,7 @@ export default function Recebidas() {
         <p>Gerencie as trocas propostas por outros usuários</p>
       </div>
 
-      <div className="max-w-3xl mx-auto mb-10 px-4 space-y-6">
+      <div className="max-w-4xl mx-auto mb-10 px-4 space-y-6">
       {carregando ? (
       <>
         <CardSkeleton />
@@ -106,11 +107,11 @@ export default function Recebidas() {
       </>
       ) : propostasPaginadas.length === 0 ? (
         <div className="flex flex-col items-center justify-center px-10 pb-10 mt-10 gap-1 text-center text-gray-500">
-            <Package size={64} className="mb-4 stroke-[#8D8D8D]" />
-            <p className="text-lg font-medium text-[#1E1E1E]">Nenhum item cadastrado ainda</p>
-            <p className="text-sm text-[#4E4E4E] mb-4">Comece registrando seu primeiro item para trocas</p>
-            <Link to="/cadastro-item" className="inline-flex items-center gap-2 px-4 py-2 bg-[#B06D6D] text-white text-sm rounded-lg hover:bg-[#c27a7a] transition-all">
-              <Plus size={16} /> Cadastre seu Primeiro Item
+            <Ghost size={64} className="mb-4 stroke-[#8D8D8D]" />
+            <p className="text-lg font-medium text-[#1E1E1E]">Nenhuma proposta realizada ainda</p>
+            <p className="text-sm text-[#4E4E4E] mb-4">Troque itens com outros usuários!</p>
+            <Link to="/" className="inline-flex items-center gap-2 px-4 py-2 bg-[#B06D6D] text-white text-sm rounded-lg hover:bg-[#c27a7a] transition-all">
+              Fazer propostas
             </Link>
         </div>
       ) : (
