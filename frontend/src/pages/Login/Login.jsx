@@ -24,7 +24,8 @@ export default function Login() {
 
     if (res.ok) {
       const data = await res.json();
-      console.log("🔎 Resposta do login:", data); // <- isso vai mostrar se o token e o user vieram certinho
+      console.log("Resposta do login:", data); 
+
       login(data); // passa o token para o contexto
       navigate('/');
     } else {

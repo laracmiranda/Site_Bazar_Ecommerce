@@ -1,16 +1,22 @@
+// Home.jsx
 import { useAuth } from "../context/AuthContext";
-import {  Search,  Smile,  Tag,  ListFilter,  CircleChevronLeft,  CircleChevronRight,} from "lucide-react";
+import {
+  Search,
+  Smile,
+  Tag,
+  ListFilter,
+  CircleChevronLeft,
+  CircleChevronRight,
+} from "lucide-react";
 import { useEffect, useState } from "react";
-import { Navigate, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import Footer from "../components/Footer";
-import ModalProposta from "../components/ModalProposta"; // ✅ IMPORTADO
+import ModalProposta from "../components/ModalProposta"; 
 import axios from "axios";
 import { toast } from "react-toastify";
 
-
 export default function Home() {
   const { isAuthenticated, user } = useAuth();
-
   const navigate = useNavigate();
   const handleCadastroClick = () => navigate("/registro");
 
@@ -19,30 +25,42 @@ export default function Home() {
   const [quantidadeAtivos, setQuantidadeAtivos] = useState(0);
   const [meusItens, setMeusItens] = useState([]);
   const [modalVisivel, setModalVisivel] = useState(false);
-
   const [itemDesejadoSelecionado, setItemDesejadoSelecionado] = useState(null);
 
-  // Relacionados à proposta
-
-   const handleFazerProposta = (item) => {
+  const handleFazerProposta = (item) => {
     setItemDesejadoSelecionado(item);
     setModalVisivel(true);
   };
 
-  // Função para enviar proposta
-
-    const handleEnviarProposta = async (proposta) => {
+  const handleEnviarProposta = async (proposta) => {
     if (!user || !user.cpf) {
       console.error("Usuário não logado ou CPF não disponível.");
-      alert("Você precisa estar logado para enviar propostas.");
+      toast.error("Você precisa estar logado para enviar propostas.");
+      return;
+    }
+
+    const itemDesejado = itens.find((item) => item.id_item === proposta.item_desejado);
+    const itemOfertado = meusItens.find((item) => item.id_item === proposta.item_ofertado);
+
+    if (!itemDesejado || itemDesejado.status_item !== true) {
+      toast.error("O item desejado não está disponível para troca.");
+      return;
+    }
+
+    if (!itemOfertado || itemOfertado.status_item !== false) {
+      toast.error("O seu item ofertado não está disponível para troca.");
       return;
     }
 
     const payload = {
       cpf_proponente: user.cpf,
-      ...proposta,
+      item_ofertado: Number(proposta.item_ofertado),
+      item_desejado: Number(proposta.item_desejado),
+      cpf_dono_item: proposta.cpf_dono_item,
       status_proposta: "pendente",
     };
+
+    console.log("Enviando proposta:", payload);
 
     try {
       const res = await fetch("http://localhost:3000/propostas", {
@@ -52,7 +70,10 @@ export default function Home() {
         body: JSON.stringify(payload),
       });
 
-      if (!res.ok) throw new Error("Erro ao enviar proposta");
+      if (!res.ok) {
+        const errorText = await res.text();
+        throw new Error(`Erro ao enviar proposta: ${res.status} - ${errorText}`);
+      }
 
       toast.success("Proposta enviada com sucesso!");
       setModalVisivel(false);
@@ -62,45 +83,31 @@ export default function Home() {
     }
   };
 
-   useEffect(() => {
-      const fetchMeusItens = async () => {
-        try {
-          const res = await fetch("http://localhost:3000/itens/meus-itens", {
-            method: "GET",
-            credentials: "include", // importante para enviar cookies
-          });
+  useEffect(() => {
+    const fetchMeusItens = async () => {
+      try {
+        const res = await fetch("http://localhost:3000/itens/meus-itens", {
+          method: "GET",
+          credentials: "include",
+        });
 
-          if (!res.ok) {
-            // Logar o status e a mensagem de erro da resposta
-            const errorText = await res.text();
-            throw new Error(`Erro ao buscar itens: ${res.status} - ${errorText}`);
-          }
-
-          const data = await res.json();
-          console.log("Dados brutos da API para 'meus-itens':", data); // NOVO LOG AQUI
-
-          // Filtra os itens apenas do usuário logado
-          const itensFiltrados = data.filter(item => {
-            const isOwner = item.cpf_dono === user?.cpf; // AQUI ESTÁ A COMPARAÇÃO CRÍTICA
-            console.log(`Comparando: Item CPF_DONO=${item.cpf_dono} com USUARIO CPF=${user?.cpf}. Resultado: ${isOwner}`); // NOVO LOG AQUI PARA DEBUG DA COMPARAÇÃO
-            return isOwner;
-          });
-
-          setMeusItens(itensFiltrados);
-          console.log("Meus itens filtrados:", itensFiltrados); // NOVO LOG AQUI PARA VER O RESULTADO FINAL
-        } catch (err) {
-          console.error("Erro ao buscar meus itens:", err);
+        if (!res.ok) {
+          const errorText = await res.text();
+          throw new Error(`Erro ao buscar itens: ${res.status} - ${errorText}`);
         }
-      };
 
-      // Garante que 'usuario' e 'usuario.cpf' existem antes de tentar buscar os itens
-      if (user && user.cpf) {
-        console.log("Usuário logado com CPF:", user.cpf); // NOVO LOG
-        fetchMeusItens();
-      } else {
-        console.log("Usuário não logado ou CPF não disponível ainda."); // NOVO LOG
+        const data = await res.json();
+        const itensFiltrados = data.filter((item) => item.cpf_dono === user?.cpf && item.status_item === false);
+        setMeusItens(itensFiltrados);
+      } catch (err) {
+        console.error("Erro ao buscar meus itens:", err);
       }
-      }, [user]); // A dependência deve ser 'usuario' inteiro para reagir a mudanças no objeto.
+    };
+
+    if (user && user.cpf) {
+      fetchMeusItens();
+    }
+  }, [user]); // A dependência deve ser 'usuario' inteiro para reagir a mudanças no objeto.
 
   useEffect(() => {
     const fetchItens = async () => {
@@ -133,7 +140,6 @@ export default function Home() {
   const itensPorPagina = 12;
 
   const filteredItens = itens.filter((item) => {
-
     const matchesSearch = [item.nome, item.descricao].some((field) =>
       field?.toLowerCase().includes(search.toLowerCase())
     );
@@ -145,12 +151,10 @@ export default function Home() {
   });
 
   const totalPaginas = Math.ceil(filteredItens.length / itensPorPagina);
-
   const itensPaginados = filteredItens.slice(
     (paginaAtual - 1) * itensPorPagina,
     paginaAtual * itensPorPagina
   );
- 
 
   const SkeletonCard = () => (
     <div className="bg-white rounded-lg shadow-lg animate-pulse">
@@ -250,14 +254,25 @@ export default function Home() {
                         <Tag className="w-2.5 h-2.5 stroke-[#4E4E4E]" />
                         <span className="text-xs text-[#4E4E4E]">{item.categoria || "Categoria"}</span>
                       </div>
+                      <p className="text-sm text-[#1E1E1E] mb-3">{item.descricao}</p>
                     </div>
-                    <p className="text-sm text-[#1E1E1E] mb-3">{item.descricao}</p>
-                  </div>
-                  <div className="flex items-center justify-between mt-auto">
-                    <div className="flex flex-row gap-1 items-center">
-                      <Smile className="w-4 h-4 stroke-[#4E4E4E]" />
-                      <span className="text-xs text-[#4E4E4E]">{item.donoItem?.nome || "Anônimo"}</span>
+                    <div className="flex items-center justify-between mt-auto">
+                      <div className="flex flex-row gap-1 items-center">
+                        <Smile className="w-4 h-4 stroke-[#4E4E4E]" />
+                        <span className="text-xs text-[#4E4E4E]">{item.donoItem?.nome || "Anônimo"}</span>
+                      </div>
+                      {!isAuthenticated ? (
+                        <p className="text-xs text-[#4E4E4E]">Entre para ofertar</p>
+                      ) : (
+                        <button
+                          onClick={() => handleFazerProposta(item)}
+                          className="bg-[#B06D6D] text-white p-2 text-xs rounded hover:bg-[#a05c5c] transition"
+                        >
+                          Fazer proposta
+                        </button>
+                      )}
                     </div>
+
                     {!isAuthenticated ? (
                       <p className="text-xs text-[#4E4E4E]">Entre para ofertar</p>
                     ) : (
@@ -270,40 +285,35 @@ export default function Home() {
                     )}
                   </div>
                 </div>
-              </div>
-            ))
-          )}
+              ))}
+        </div>
+        {!carregando && totalPaginas > 1 && (
+          <div className="flex justify-center items-center mt-10 gap-4">
+            <button
+              onClick={() => setPaginaAtual((prev) => Math.max(prev - 1, 1))}
+              disabled={paginaAtual === 1}
+              className="px-4 py-2 disabled:opacity-50 cursor-pointer"
+            >
+              <CircleChevronLeft className="text-[#4E4E4E] " />
+            </button>
+
+            <span className="text-xs text-[#4E4E4E]">
+              Página {paginaAtual} de {totalPaginas}
+            </span>
+
+            <button
+              onClick={() => setPaginaAtual((prev) => Math.min(prev + 1, totalPaginas))}
+              disabled={paginaAtual === totalPaginas}
+              className="px-4 py-2 disabled:opacity-50 cursor-pointer"
+            >
+              <CircleChevronRight className="text-[#4E4E4E] " />
+            </button>
           </div>
-          {/* Paginação */}
-          {!carregando && totalPaginas > 1 && (
-            <div className="flex justify-center items-center mt-10 gap-4">
-              <button
-                onClick={() => setPaginaAtual((prev) => Math.max(prev - 1, 1))}
-                disabled={paginaAtual === 1}
-                className="px-4 py-2 disabled:opacity-50 cursor-pointer"
-              >
-                <CircleChevronLeft className="text-[#4E4E4E] "/>
-              </button>
+        )}
+      </section>
 
-              <span className="text-xs text-[#4E4E4E]">
-               Página {paginaAtual} de {totalPaginas}
-              </span>
+      <Footer />
 
-              <button
-                onClick={() => setPaginaAtual((prev) => Math.min(prev + 1, totalPaginas))}
-                disabled={paginaAtual === totalPaginas}
-                className="px-4 py-2 disabled:opacity-50 cursor-pointer"
-              >
-                <CircleChevronRight className="text-[#4E4E4E] " />
-              </button>
-            </div>
-          )}
-    </section>
-
-    </div>
-    <Footer/>
-      
-      {/* Modal Proposta */}
       <ModalProposta
         visivel={modalVisivel}
         onCancelar={() => setModalVisivel(false)}
@@ -312,5 +322,6 @@ export default function Home() {
         itemDesejadoId={itemDesejadoSelecionado?.id_item}
         donoItemCpf={itemDesejadoSelecionado?.cpf_dono}
       />
-  </>;
+    </>
+  );
 }
