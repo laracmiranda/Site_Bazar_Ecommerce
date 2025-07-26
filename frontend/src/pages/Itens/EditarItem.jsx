@@ -10,7 +10,7 @@ export default function EditarItem() {
     nome: '',
     descricao: '',
     categoria: '',
-    status_item: false,
+    status_item: '',
   });
   const [imagem, setImagem] = useState(null);
   const token = localStorage.getItem('token');
@@ -132,23 +132,20 @@ export default function EditarItem() {
           <label className="block text-sm font-medium mb-2">Publicar item?</label>
           <div
             onClick={() =>
-              setForm({
-                ...form,
-                status_item: form.status_item === 'true' || form.status_item === true ? 'false' : 'true',
-              })
+              setForm({...form, status_item: !form.status_item})
             }
             className={`w-20 h-8 flex items-center justify-between px-1 rounded-full cursor-pointer transition-colors duration-300 ${
-              form.status_item === 'true' || form.status_item === true ? 'bg-[#DCFCE7]' : 'bg-gray-300'
+              form.status_item ? 'bg-[#DCFCE7]' : 'bg-gray-300'
             }`}
           >
             <div
               className={`w-1/2 h-6 rounded-full text-xs font-semibold text-center leading-6 transition-all duration-300 ${
-                form.status_item === 'true' || form.status_item === true
+                form.status_item
                   ? 'bg-white text-[#374151] translate-x-full'
                   : 'bg-white text-gray-600'
               }`}
             >
-              {form.status_item === 'true' || form.status_item === true ? 'Sim' : 'Não'}
+              {form.status_item ? 'Sim' : 'Não'}
             </div>
           </div>
         </div>

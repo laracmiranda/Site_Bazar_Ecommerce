@@ -1,8 +1,6 @@
 import bcrypt from 'bcrypt';
 import usuariosRepository from '../repositories/usuarios.repository.js';
 
-
-
 export const listarUsuarios = async () => {
     return await usuariosRepository.findAll();
 };
