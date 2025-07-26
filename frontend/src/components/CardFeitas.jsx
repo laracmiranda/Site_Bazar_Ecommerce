@@ -85,7 +85,7 @@ export default function PropostasFeitas({
                     <img
                       src={proposta.itemDesejado?.imagem}
                       alt={proposta.itemDesejado?.nome}
-                      className="w-32 h-32 object-cover rounded-md mb-2"
+                      className="w-17 h-17 object-cover rounded-md mb-2"
                     />
                     <div className="space-y-1">
                       <p className="font-semibold text-gray-800">{proposta.itemDesejado?.nome}</p>
@@ -99,7 +99,7 @@ export default function PropostasFeitas({
                     <img
                       src={proposta.itemOfertado?.imagem}
                       alt={proposta.itemOfertado?.nome}
-                      className="w-32 h-32 object-cover rounded-md mb-2 mx-auto"
+                      className="w-17 h-17 object-cover rounded-md mb-2 mx-auto"
                     />
                     <div className="space-y-1">
                       <p className="font-semibold text-gray-800">{proposta.itemOfertado?.nome}</p>
@@ -107,6 +107,9 @@ export default function PropostasFeitas({
                     </div>
                   </div>
                 </div>
+
+                {/* Linha divisória */}
+                <hr className="my-6 border-gray-200" />
 
                 {/* Ações */}
                 {proposta.status_proposta === "pendente" ? (

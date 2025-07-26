@@ -5,6 +5,7 @@ import { Navigate, useNavigate } from "react-router-dom";
 import Footer from "../components/Footer";
 import ModalProposta from "../components/ModalProposta"; // ✅ IMPORTADO
 import axios from "axios";
+import { toast } from "react-toastify";
 
 
 export default function Home() {
@@ -53,11 +54,11 @@ export default function Home() {
 
       if (!res.ok) throw new Error("Erro ao enviar proposta");
 
-      alert("Proposta enviada com sucesso!");
+      toast.success("Proposta enviada com sucesso!");
       setModalVisivel(false);
     } catch (error) {
       console.error("Erro ao enviar proposta:", error);
-      alert("Erro ao enviar proposta.");
+      toast.error("Erro ao enviar proposta.");
     }
   };
 
@@ -99,7 +100,7 @@ export default function Home() {
       } else {
         console.log("Usuário não logado ou CPF não disponível ainda."); // NOVO LOG
       }
-  }, [user]); // A dependência deve ser 'usuario' inteiro para reagir a mudanças no objeto.
+      }, [user]); // A dependência deve ser 'usuario' inteiro para reagir a mudanças no objeto.
 
   useEffect(() => {
     const fetchItens = async () => {
@@ -225,10 +226,10 @@ export default function Home() {
 
     {/* Lista de Itens */}
     <section className="px-4 md:px-30 py-6 flex-1">
-      <h3 className="text-xl font-semibold mb-4 text-[#B06D6D]">Itens disponíveis</h3>
+      <h3 className="text-2xl font-semibold mb-6 text-[#B06D6D]">Itens disponíveis</h3>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
         {carregando ? (
-          [...Array(8)].map((_, index) => (
+          [...Array(4)].map((_, index) => (
           <SkeletonCard key={index} />
           ))
         ) : (

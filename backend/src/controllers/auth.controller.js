@@ -24,7 +24,7 @@ export const login = async (req, res) => {
 
         // Gera o token com os dados do usuário
         const token = jwt.sign(
-        { cpf: usuario.cpf, email: usuario.email },
+        { cpf: usuario.cpf, email: usuario.email, nome: usuario.nome },
         SECRET,
         { expiresIn: '1h' }
         );
