@@ -176,13 +176,13 @@ export default function PropostasFeitas({
 
         {!loading && propostas.length === 0 && (
           <div className="flex flex-col items-center justify-center px-10 pb-10 mt-10 gap-1 text-center text-gray-500">
-            <Ghost size={64} className="mb-4 stroke-[#8D8D8D]" />
-            <p className="text-lg font-medium text-[#1E1E1E]">Nenhuma proposta enviada ainda</p>
-            <p className="text-sm text-[#4E4E4E] mb-4">Registre um item legal!</p>
-            <Link to="/cadastro-item" className="inline-flex items-center gap-2 px-4 py-2 bg-[#B06D6D] text-white text-sm rounded-lg hover:bg-[#c27a7a] transition-all">
-              <Plus size={16} /> Adicionar Item
-            </Link>
-      </div>
+              <Ghost size={64} className="mb-4 stroke-[#8D8D8D]" />
+              <p className="text-lg font-medium text-[#1E1E1E]">Nenhuma proposta realizada</p>
+              <p className="text-sm text-[#4E4E4E] mb-4">Troque itens com outros usuários!</p>
+              <Link to="/" className="inline-flex items-center gap-2 px-4 py-2 bg-[#B06D6D] text-white text-sm rounded-lg hover:bg-[#c27a7a] transition-all">
+                Fazer propostas
+              </Link>
+          </div>
         )}
 
         {!loading && totalPaginas > 1 && (

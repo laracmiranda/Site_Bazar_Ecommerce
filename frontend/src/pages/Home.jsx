@@ -171,7 +171,7 @@ export default function Home() {
     </div>
     );
 
-  return <>
+  return (
     <div>
     <section className="w-full bg-[#B06D6D] min-h-[20rem] flex items-center justify-center px-4 py-12">
         
@@ -232,12 +232,9 @@ export default function Home() {
     <section className="px-4 md:px-30 py-6 flex-1">
       <h3 className="text-2xl font-semibold mb-6 text-[#B06D6D]">Itens disponíveis</h3>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-        {carregando ? (
-          [...Array(4)].map((_, index) => (
-          <SkeletonCard key={index} />
-          ))
-        ) : (
-          itensPaginados.map((item) => (
+        {carregando
+          ? [...Array(4)].map((_, index) => <SkeletonCard key={index} />)
+          : itensPaginados.map((item) => (
               <div key={item.id_item} className="bg-white rounded-lg shadow-lg flex flex-col">
                 <div>
                   <img
@@ -254,8 +251,8 @@ export default function Home() {
                         <Tag className="w-2.5 h-2.5 stroke-[#4E4E4E]" />
                         <span className="text-xs text-[#4E4E4E]">{item.categoria || "Categoria"}</span>
                       </div>
-                      <p className="text-sm text-[#1E1E1E] mb-3">{item.descricao}</p>
                     </div>
+                    <p className="text-sm text-[#1E1E1E] mb-3">{item.descricao}</p>
                     <div className="flex items-center justify-between mt-auto">
                       <div className="flex flex-row gap-1 items-center">
                         <Smile className="w-4 h-4 stroke-[#4E4E4E]" />
@@ -272,21 +269,11 @@ export default function Home() {
                         </button>
                       )}
                     </div>
-
-                    {!isAuthenticated ? (
-                      <p className="text-xs text-[#4E4E4E]">Entre para ofertar</p>
-                    ) : (
-                      <button
-                        onClick={() => handleFazerProposta(item)}
-                        className="bg-[#B06D6D] text-white p-2 text-xs rounded hover:bg-[#a05c5c] transition"
-                      >
-                        Fazer proposta
-                      </button>
-                    )}
                   </div>
                 </div>
-              ))}
-        </div>
+              </div>
+            ))}
+      </div>
         {!carregando && totalPaginas > 1 && (
           <div className="flex justify-center items-center mt-10 gap-4">
             <button
@@ -322,6 +309,6 @@ export default function Home() {
         itemDesejadoId={itemDesejadoSelecionado?.id_item}
         donoItemCpf={itemDesejadoSelecionado?.cpf_dono}
       />
-    </>
-  );
+    </div>
+    );
 }
