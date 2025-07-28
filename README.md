@@ -140,6 +140,7 @@ npm run dev
 * Página de perfil do usuário
 * Redefinição de senha do usuário
 * Correções na lógica de propostas
+* Refatorar o código
 * Deploy da aplicação *(em andamento)*
 
 ---
