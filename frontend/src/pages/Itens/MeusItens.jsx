@@ -8,7 +8,8 @@ export default function MeusItens() {
   const [itens, setItens] = useState([]);
   const [erro, setErro] = useState(null);
   const [carregando, setCarregando] = useState(true);
-  
+  const API_URL = import.meta.env.VITE_API_URL;
+
   async function tratarResposta(response) {
   if (response.status === 401) {
     alert('Sua sessão expirou');
@@ -25,7 +26,7 @@ export default function MeusItens() {
   useEffect(() => {
   const fetchItens = async () => {
     try {
-      const response = await fetch('http://localhost:3000/itens/meus-itens', {
+      const response = await fetch(`${API_URL}/itens/meus-itens`, {
         credentials: 'include',
       });
 
@@ -52,7 +53,7 @@ export default function MeusItens() {
 
   async function handleDelete(id) {
   try {
-    const res = await fetch(`http://localhost:3000/itens/${id}`, {
+    const res = await fetch(`${API_URL}/itens/${id}`, {
       method: 'DELETE',
       headers: {
         Authorization: `Bearer ${localStorage.getItem('token')}`

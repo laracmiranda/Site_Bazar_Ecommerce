@@ -23,10 +23,12 @@ export default function Recebidas() {
   const propostasPaginadas = propostasRecebidas.slice(indiceInicial, indiceFinal);
   const totalPaginas = Math.ceil(propostasRecebidas.length / itensPorPagina);
 
+  const API_URL = import.meta.env.VITE_API_URL;
+
   useEffect(() => {
       const buscarPropostasRecebidas = async () => {
     try {
-      const res = await axios.get('http://localhost:3000/propostas/recebidas/minhas', {
+      const res = await axios.get(`${API_URL}/propostas/recebidas/minhas`, {
         withCredentials: true,
       });
 
@@ -49,7 +51,7 @@ export default function Recebidas() {
 
   const atualizarStatus = async (id, status) => {
   try {
-    const res = await axios.patch(`http://localhost:3000/propostas/${id}/status`, {
+    const res = await axios.patch(`${API_URL}/propostas/${id}/status`, {
       status_proposta: status
     }, {
       withCredentials: true,

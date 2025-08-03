@@ -25,6 +25,8 @@ export default function CadastroItem() {
     setImagem(e.target.files[0]);
   };
 
+  const API_URL = import.meta.env.VITE_API_URL;
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -41,7 +43,7 @@ export default function CadastroItem() {
     formData.append('imagem', imagem);
 
     try {
-      const res = await fetch('http://localhost:3000/itens', {
+      const res = await fetch(`${API_URL}/itens`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`,

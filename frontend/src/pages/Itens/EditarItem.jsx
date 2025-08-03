@@ -15,12 +15,14 @@ export default function EditarItem() {
   const [imagem, setImagem] = useState(null);
   const token = localStorage.getItem('token');
 
+  const API_URL = import.meta.env.VITE_API_URL;
+
   useEffect(() => {
     if (!id || isNaN(Number(id))) return;
 
     const fetchItem = async () => {
       try {
-        const res = await fetch(`http://localhost:3000/itens/${id}`);
+        const res = await fetch(`${API_URL}/itens/${id}`);
         const data = await res.json();
         setForm({
           nome: data.nome,
@@ -56,7 +58,7 @@ export default function EditarItem() {
     if (imagem) formData.append('imagem', imagem);
 
     try {
-      const res = await fetch(`http://localhost:3000/itens/${id}`, {
+      const res = await fetch(`${API_URL}/itens/${id}`, {
         method: 'PUT',
         body: formData,
         credentials: 'include',

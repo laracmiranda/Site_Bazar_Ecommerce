@@ -8,6 +8,7 @@ export default function Registro() {
   const [message, setMessage] = useState('');
   const [mostrarSenha, setMostrarSenha] = useState(false);
   const navigate = useNavigate();
+  const API_URL = import.meta.env.VITE_API_URL;
 
   const handleChange = (e) => {
   setForm({ ...form, [e.target.name]: e.target.value });
@@ -19,7 +20,7 @@ export default function Registro() {
   const { ...dadosParaEnvio } = form;
 
   try {
-  const res = await fetch('http://localhost:3000/usuarios', {
+  const res = await fetch(`${API_URL}/usuarios`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(dadosParaEnvio),

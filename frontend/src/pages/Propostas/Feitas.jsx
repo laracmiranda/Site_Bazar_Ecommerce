@@ -9,11 +9,12 @@ export default function PropostasPage() {
   const [propostas, setPropostas] = useState()
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
+  const API_URL = import.meta.env.VITE_API_URL;
 
   useEffect(() => {
   const fetchPropostas = async () => {
     try {
-      const response = await axios.get("http://localhost:3000/propostas/proponente/minhas-propostas", {
+      const response = await axios.get(`${API_URL}/propostas/proponente/minhas-propostas`, {
         withCredentials: true,
       })
       console.log("Resposta da API:", response.data)
@@ -46,7 +47,7 @@ export default function PropostasPage() {
 
   try {
     await axios.patch(
-      `http://localhost:3000/propostas/${propostaId}/status`,
+      `${API_URL}/${propostaId}/status`,
       { status_proposta: "cancelada" },
       { withCredentials: true }
     )

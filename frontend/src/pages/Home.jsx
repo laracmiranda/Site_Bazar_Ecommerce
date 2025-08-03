@@ -27,6 +27,8 @@ export default function Home() {
   const [modalVisivel, setModalVisivel] = useState(false);
   const [itemDesejadoSelecionado, setItemDesejadoSelecionado] = useState(null);
 
+  const API_URL = import.meta.env.VITE_API_URL;
+
   const handleFazerProposta = (item) => {
     setItemDesejadoSelecionado(item);
     setModalVisivel(true);
@@ -63,7 +65,7 @@ export default function Home() {
     console.log("Enviando proposta:", payload);
 
     try {
-      const res = await fetch("http://localhost:3000/propostas", {
+      const res = await fetch(`${API_URL}/propostas`, {
         method: "POST",
         credentials: "include",
         headers: { "Content-Type": "application/json" },
@@ -86,7 +88,7 @@ export default function Home() {
   useEffect(() => {
     const fetchMeusItens = async () => {
       try {
-        const res = await fetch("http://localhost:3000/itens/meus-itens", {
+        const res = await fetch(`${API_URL}/itens/meus-itens`, {
           method: "GET",
           credentials: "include",
         });
@@ -113,8 +115,8 @@ export default function Home() {
     const fetchItens = async () => {
       try {
         const [ativosRes, quantidadeRes] = await Promise.all([
-          fetch("http://localhost:3000/itens/ativos", { credentials: "include" }),
-          fetch("http://localhost:3000/itens/ativos/quantidade"),
+          fetch(`${API_URL}/itens/ativos`, { credentials: "include" }),
+          fetch(`${API_URL}/itens/ativos/quantidade`),
         ]);
 
         if (!ativosRes.ok || !quantidadeRes.ok) throw new Error("Erro ao buscar dados");
