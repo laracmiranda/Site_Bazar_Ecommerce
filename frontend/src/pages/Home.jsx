@@ -28,6 +28,9 @@ export default function Home() {
   const [itemDesejadoSelecionado, setItemDesejadoSelecionado] = useState(null);
 
   const API_URL = import.meta.env.VITE_API_URL;
+  if (!API_URL) {
+    console.error("❌ API_URL está indefinido. Verifique as variáveis de ambiente.");
+  }
 
   const handleFazerProposta = (item) => {
     setItemDesejadoSelecionado(item);

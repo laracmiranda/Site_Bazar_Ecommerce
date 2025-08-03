@@ -9,10 +9,13 @@ export function AuthProvider({ children }) {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [user, setUser] = useState(null); 
   const API_URL = import.meta.env.VITE_API_URL;
-  
+  if (!API_URL) {
+    console.error("❌ API_URL está indefinido. Verifique as variáveis de ambiente.");
+  }
+
   useEffect(() => {
    
-    axios.post(`${API_URL}/auth/me`, {}, { withCredentials: true }) 
+    axios.post(`${API_URL}/auth/me`, {}, { withCredentials: true, credentials: 'include' }) 
       .then((res) => {
         console.log('Resposta do /auth/me:', res.data);
         if (res.data && res.data.user) { 

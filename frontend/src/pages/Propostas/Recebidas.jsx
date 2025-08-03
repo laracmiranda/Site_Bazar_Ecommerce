@@ -24,6 +24,9 @@ export default function Recebidas() {
   const totalPaginas = Math.ceil(propostasRecebidas.length / itensPorPagina);
 
   const API_URL = import.meta.env.VITE_API_URL;
+  if (!API_URL) {
+    console.error("❌ API_URL está indefinido. Verifique as variáveis de ambiente.");
+  }
 
   useEffect(() => {
       const buscarPropostasRecebidas = async () => {

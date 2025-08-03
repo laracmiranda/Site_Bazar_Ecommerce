@@ -8,7 +8,7 @@ import authRouter from './src/routes/auth.routes.js'
 const app = express();
 const allowedOrigins = [
   'http://localhost:5173',
-  'https://site-bazar.vercel.app',
+  'https://site-bazar.vercel.app/',
 ];
 
 //Tratar JSON
@@ -17,10 +17,12 @@ app.use(express.json());
 //Acesso para API
 app.use(cors({
   origin: function (origin, callback) {
+    console.log("🔎 Origem da requisição:", origin);
     // Permite requisições sem origin (ex: mobile/postman) ou de origens confiáveis
     if (!origin || allowedOrigins.includes(origin)) {
       callback(null, true);
     } else {
+      console.warn("⛔ Origem bloqueada pelo CORS:", origin);
       callback(new Error('Not allowed by CORS'));
     }
   },

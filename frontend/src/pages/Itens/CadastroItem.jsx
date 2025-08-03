@@ -26,6 +26,9 @@ export default function CadastroItem() {
   };
 
   const API_URL = import.meta.env.VITE_API_URL;
+  if (!API_URL) {
+    console.error("❌ API_URL está indefinido. Verifique as variáveis de ambiente.");
+  }
 
   const handleSubmit = async (e) => {
     e.preventDefault();

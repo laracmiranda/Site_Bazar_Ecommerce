@@ -9,6 +9,9 @@ export default function MeusItens() {
   const [erro, setErro] = useState(null);
   const [carregando, setCarregando] = useState(true);
   const API_URL = import.meta.env.VITE_API_URL;
+  if (!API_URL) {
+    console.error("❌ API_URL está indefinido. Verifique as variáveis de ambiente.");
+  }
 
   async function tratarResposta(response) {
   if (response.status === 401) {

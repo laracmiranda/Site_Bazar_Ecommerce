@@ -10,6 +10,9 @@ export default function PropostasPage() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
   const API_URL = import.meta.env.VITE_API_URL;
+  if (!API_URL) {
+    console.error("❌ API_URL está indefinido. Verifique as variáveis de ambiente.");
+  }
 
   useEffect(() => {
   const fetchPropostas = async () => {
