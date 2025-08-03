@@ -23,6 +23,11 @@ app.use(authRouter);
 //Rotas de aplicação
 app.use(routes);
 
+//Rota raiz de teste
+app.get('/', (req, res) => {
+  res.send('API do Bazar funcionando! 🚀');
+});
+
 //Iniciar servidor
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
