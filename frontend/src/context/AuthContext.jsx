@@ -15,7 +15,7 @@ export function AuthProvider({ children }) {
 
   useEffect(() => {
    
-    axios.post(`${API_URL}/auth/me`, {}, { withCredentials: true, credentials: 'include' }) 
+    axios.post(`${API_URL}/auth/me`, {}, { withCredentials: true }) 
       .then((res) => {
         console.log('Resposta do /auth/me:', res.data);
         if (res.data && res.data.user) { 

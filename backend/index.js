@@ -43,6 +43,12 @@ app.get('/', (req, res) => {
   res.send('API do Bazar funcionando! 🚀');
 });
 
+// Middleware global de erro para garantir resposta
+app.use((err, req, res, next) => {
+  console.error('Erro no servidor:', err);
+  res.status(500).json({ error: 'Erro interno no servidor' });
+});
+
 //Iniciar servidor
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
