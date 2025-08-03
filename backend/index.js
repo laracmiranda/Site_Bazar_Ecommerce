@@ -8,7 +8,7 @@ import authRouter from './src/routes/auth.routes.js'
 const app = express();
 const allowedOrigins = [
   'http://localhost:5173',
-  'https://site-bazar.vercel.app/',
+  'https://site-bazar.vercel.app',
 ];
 
 //Tratar JSON
