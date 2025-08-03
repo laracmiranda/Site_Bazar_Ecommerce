@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { User, Mail, MapPin, Lock, EyeOff, Eye } from 'lucide-react';
 import { toast } from 'react-toastify';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 export default function Registro() {
   const [form, setForm] = useState({ nome: '', cpf: '', email: '', endereco: '', senha: ''});
@@ -164,9 +164,9 @@ export default function Registro() {
 
         <p className="mt-6 text-center text-sm">
           Já possui uma conta?{' '}
-          <a href="/login" className="text-[#B06D6D] font-semibold hover:underline">
+          <Link to="/login" className="text-[#B06D6D] font-semibold hover:underline">
             Entre aqui
-          </a>
+          </Link>
         </p>
       </div>
     </div>
