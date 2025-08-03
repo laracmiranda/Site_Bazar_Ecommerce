@@ -6,13 +6,26 @@ import authRouter from './src/routes/auth.routes.js'
 
 
 const app = express();
-const corsOptions = {origin: "http://localhost:5173", credentials: true};
+const allowedOrigins = [
+  'http://localhost:5173',
+  'https://site-bazar.vercel.app',
+];
 
 //Tratar JSON
 app.use(express.json());
 
 //Acesso para API
-app.use(cors(corsOptions));
+app.use(cors({
+  origin: function (origin, callback) {
+    // Permite requisições sem origin (ex: mobile/postman) ou de origens confiáveis
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  credentials: true,
+}));
 
 //biblioteca cookies
 app.use(cookieParser());
