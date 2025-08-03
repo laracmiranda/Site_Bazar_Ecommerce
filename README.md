@@ -2,13 +2,18 @@
 
 Projeto de uma loja virtual desenvolvido como projeto final do Bootcamp da Atlântico Avanti. O objetivo foi criar uma interface agradável e funcional para simular um e-commerce simples, com foco na exibição de produtos e boa experiência do usuário, onde os usuários anunciam itens e oferecem todas através de propostas
 
+</br>
+
+**Acesse o deploy da aplicação em produção:**
+</br>
+🔗 [https://site-bazar.vercel.app](https://site-bazar.vercel.app)
+
 ---
 
 ## 📸 Visualização
 </br>
 
 >  <img width="480" height="746" alt="image" src="https://github.com/user-attachments/assets/90886396-8249-4a15-8ead-b95bc11d45db" /> 
-
 
 
 ## 📲 Funcionalidades
@@ -132,6 +137,7 @@ npm run dev
 * Uso do React com Vite para performance
 * Estilização com TailwindCSS
 * Consumo de API REST com React
+* Como fazer o deploy de uma aplicação fullStack
 
 ---
 
@@ -141,7 +147,7 @@ npm run dev
 * Redefinição de senha do usuário
 * Correções na lógica de propostas
 * Refatorar o código
-* Deploy da aplicação *(em andamento)*
+* ~~Deploy da aplicação~~ ✅
 
 ---
 
