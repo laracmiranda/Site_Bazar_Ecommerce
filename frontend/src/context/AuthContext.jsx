@@ -8,10 +8,11 @@ export function AuthProvider({ children }) {
   
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [user, setUser] = useState(null); 
-
+  const API_URL = import.meta.env.VITE_API_URL;
+  
   useEffect(() => {
    
-    axios.post('http://localhost:3000/auth/me', {}, { withCredentials: true }) 
+    axios.post(`${API_URL}/auth/me`, {}, { withCredentials: true }) 
       .then((res) => {
         console.log('Resposta do /auth/me:', res.data);
         if (res.data && res.data.user) { 

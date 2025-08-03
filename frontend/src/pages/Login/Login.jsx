@@ -21,6 +21,7 @@ export default function Login() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email, senha: senha.trim() }),
       credentials: 'include',
+      withCredentials: true,
     });  
 
     if (res.ok) {
